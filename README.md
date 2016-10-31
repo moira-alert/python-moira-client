@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/moira-alert/python-moira-client.svg?branch=master)](https://travis-ci.org/moira-alert/python-moira-client)
+
 # Moira Client
 
 Python client for Moira.
