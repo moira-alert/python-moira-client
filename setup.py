@@ -39,6 +39,6 @@ setup(
 
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
     ],
-    url='https://github.com/moira-alert/worker',
+    url='https://github.com/moira-alert/python-moira-client',
     install_requires=required
 )
