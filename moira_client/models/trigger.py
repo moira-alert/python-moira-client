@@ -160,6 +160,11 @@ class Trigger(Base):
         """
         if self._id:
             return self.update()
+        trigger_id = self.check_exists()
+
+        if trigger_id:
+            return trigger_id
+
         return self._send_request()
 
     def update(self):
@@ -209,6 +214,19 @@ class Trigger(Base):
         :return: None
         """
         self._end_minute = minute
+
+    def check_exists(self):
+        """
+        Check if current trigger exists
+
+        :return: trigger id if exists, None otherwise
+        """
+        trigger_manager = TriggerManager(self._client)
+        for trigger in trigger_manager.fetch_all():
+            if self.name == trigger.name and \
+                self.targets == trigger.targets and \
+                self.tags == trigger.tags:
+                return trigger.id
 
 
 class TriggerManager:
