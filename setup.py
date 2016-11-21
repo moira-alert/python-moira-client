@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='moira-client',
-    version='0.1.1',
+    version='0.2',
     description='Client for Moira - Alerting system based on Graphite data',
     keywords='moira monitoring client metrics alerting',
     long_description="""

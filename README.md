@@ -49,6 +49,37 @@ trigger = moira.trigger.get_by_id('bb1a8514-128b-406e-bec3-25e94153ab30')
 moira.trigger.delete(trigger.id)
 ```
 
+### Check whether trigger exists or not (manually)
+```
+trigger = moira.trigger.create(
+    name='service',
+    targets=['service.rps'],
+    tags=['ops']
+)
+
+if not moira.trigger.is_exist(trigger):
+    trigger.save()
+```
+
+### Get non existent triggers
+```
+trigger1 = moira.trigger.create(
+    name='service',
+    targets=['service.rps'],
+    tags=['ops']
+)
+
+trigger2 = moira.trigger.create(
+    name='site',
+    targets=['site.rps'],
+    tags=['ops']
+)
+
+triggers = [trigger1, trigger2]
+
+non_existent_triggers = moira.trigger.get_non_existent(triggers)
+```
+
 ## Subscription
 
 ### Create subscription

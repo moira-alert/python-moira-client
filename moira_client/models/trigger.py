@@ -315,6 +315,36 @@ class TriggerManager:
         except InvalidJSONError:
             return False
 
+
+    def is_exist(self, trigger):
+        """
+        Check whether trigger exists or not
+
+        :param trigger: Trigger trigger to check
+        :return: bool
+        """
+        for moira_trigger in self.fetch_all():
+            if trigger.name == moira_trigger.name and \
+                trigger.targets == moira_trigger.targets and \
+                trigger.tags == moira_trigger.tags:
+                return True
+        return False
+
+    def get_non_existent(self, triggers):
+        """
+        Returns triggers which are not exist yet
+
+        :param triggers: list of Trigger
+        :return: list of Trigger
+        """
+        moira_triggers = self.fetch_all()
+        non_existent = []
+        for trigger in triggers:
+            if not self.is_exist(trigger):
+                non_existent.append(trigger)
+
+        return non_existent
+
     def create(
             self,
             name,
