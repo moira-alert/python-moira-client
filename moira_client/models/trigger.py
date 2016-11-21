@@ -340,7 +340,14 @@ class TriggerManager:
         moira_triggers = self.fetch_all()
         non_existent = []
         for trigger in triggers:
-            if not self.is_exist(trigger):
+            exist = False
+            for moira_trigger in moira_triggers:
+                if trigger.name == moira_trigger.name and \
+                                trigger.targets == moira_trigger.targets and \
+                                trigger.tags == moira_trigger.tags:
+                    exist = True
+                    break
+            if not exist:
                 non_existent.append(trigger)
 
         return non_existent
