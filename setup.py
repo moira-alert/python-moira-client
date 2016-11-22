@@ -16,6 +16,8 @@ setup(
         - create, delete, update subscriptions
         - manage tags, patterns, notifications, events, contacts
     """,
+    author = 'Alexander Lukyanchenko',
+    author_email = 'al.lukyanchenko@gmail.com',
     packages=[
         'moira_client',
         'moira_client.models'
