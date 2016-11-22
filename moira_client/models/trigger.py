@@ -160,10 +160,11 @@ class Trigger(Base):
         """
         if self._id:
             return self.update()
-        trigger_id = self.check_exists()
+        trigger = self.check_exists()
 
-        if trigger_id:
-            return trigger_id
+        if trigger:
+            self._id = trigger.id
+            return trigger.id
 
         return self._send_request()
 
@@ -226,7 +227,7 @@ class Trigger(Base):
             if self.name == trigger.name and \
                 self.targets == trigger.targets and \
                 self.tags == trigger.tags:
-                return trigger.id
+                return trigger
 
 
 class TriggerManager:

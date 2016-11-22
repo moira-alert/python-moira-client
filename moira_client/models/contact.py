@@ -61,7 +61,25 @@ class ContactManager:
         if 'list' not in result:
             raise ResponseStructureError("list doesn't exist in response", result)
 
-        return result['list']
+        contacts = []
+
+        for contact in result['list']:
+            contacts.append(Contact(**contact))
+
+        return contacts
+
+    def get_id(self, type, value):
+        """
+        Returns contact id by type and value
+        Returns None if contact doesn't exist
+
+        :param type: str contact type
+        :param value: str contact value
+        :return: str contact id
+        """
+        for contact in self.fetch_all():
+            if contact.type == type and contact.value == value:
+                return contact.id
 
     def delete(self, contact_id):
         """

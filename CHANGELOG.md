@@ -1,3 +1,7 @@
+# 0.3
+- Store id in Trigger after save of existent trigger
+- Add get_id Contact method
+
 # 0.2
 - TriggerManager is_exist function added
 - TriggerManager get_non_existent function added 

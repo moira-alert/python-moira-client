@@ -4,6 +4,12 @@
 
 Python client for Moira.
 
+# Installation
+
+```
+pip install moira-client
+```
+
 # Getting started
 
 Initialize Moira client:
@@ -97,4 +103,19 @@ Delete all subscriptions
 subscriptions = moira.subscription.fetch_all()
 for subscription in subscriptions:
     moira.subscription.delete(subscription.id)
+```
+
+## Contact
+
+### Get all contacts
+```
+contacts = moira.contact.fetch_all()
+for contact in contacts:
+    print(contact.id)
+```
+
+### Get contact id by type and value
+```
+contact_id = moira.contact.get_id(type='slack', value='#err')
+print(contact_id)
 ```
