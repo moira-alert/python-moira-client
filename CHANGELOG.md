@@ -1,3 +1,7 @@
+# 0.3.1
+- Trigger update on save
+- Subscription is_exist method added
+
 # 0.3
 - Store id in Trigger after save of existent trigger
 - Add get_id Contact method

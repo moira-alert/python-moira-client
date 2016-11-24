@@ -197,6 +197,28 @@ class SubscriptionManager:
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
 
+    def is_exist(self, **kwargs):
+        """
+        Check whether subscription exists or not by any attributes
+
+        :param kwargs: attributes
+        :return: bool
+
+        :raises: ValueError
+        """
+        for subscription in self.fetch_all():
+            equal = True
+            for attr, value in kwargs.items():
+                try:
+                    if getattr(subscription, attr) != value:
+                        equal = False
+                        break
+                except Exception:
+                    raise ValueError('Wrong attibute "{}"'.format(attr))
+            if equal:
+                return True
+        return False
+
     def create(self, contacts=None, tags=None, enabled=True, throttling=True, sched=None, **kwargs):
         """
         Create new subscription.

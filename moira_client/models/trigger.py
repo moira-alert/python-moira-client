@@ -164,6 +164,7 @@ class Trigger(Base):
 
         if trigger:
             self._id = trigger.id
+            self.update()
             return trigger.id
 
         return self._send_request()
