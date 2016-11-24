@@ -43,6 +43,11 @@ class ContactManager:
             'type': contact_type
         }
 
+        contacts = self.fetch_all()
+        for contact in contacts:
+            if contact.value == value and contact.type == contact_type:
+                return contact
+
         result = self._client.put(self._full_path(), json=data)
         if 'id' not in result:
             raise ResponseStructureError('No id in response', result)
