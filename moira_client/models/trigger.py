@@ -185,7 +185,7 @@ class Trigger(Base):
 
         :return: None
         """
-        self._start_hour = hour
+        self._start_hour = int(hour)
 
     def set_start_minute(self, minute):
         """
@@ -195,7 +195,7 @@ class Trigger(Base):
 
         :return: None
         """
-        self._start_minute = minute
+        self._start_minute = int(minute)
 
     def set_end_hour(self, hour):
         """
@@ -205,7 +205,7 @@ class Trigger(Base):
 
         :return: None
         """
-        self._end_hour = hour
+        self._end_hour = int(hour)
 
     def set_end_minute(self, minute):
         """
@@ -215,7 +215,7 @@ class Trigger(Base):
 
         :return: None
         """
-        self._end_minute = minute
+        self._end_minute = int(minute)
 
     def check_exists(self):
         """
