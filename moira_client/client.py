@@ -27,6 +27,9 @@ class Client:
         """
 
         :param api_url: str Moira API URL
+        :param login: str auth login
+        :param auth_user: str auth user
+        :param auth_pass: str auth password
         """
         if not api_url.endswith('/'):
             self.api_url = api_url + '/'
