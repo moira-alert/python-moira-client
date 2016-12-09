@@ -40,8 +40,6 @@ class Client:
         if auth_user and auth_pass:
             self.auth = HTTPBasicAuth(auth_user, auth_pass)
 
-        print('self.auth :: ', self.auth)
-
         self.auth_header = {'X-Webauth-User': login}
 
     def get(self, path='', **kwargs):
