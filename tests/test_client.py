@@ -40,7 +40,7 @@ class ClientTest(unittest.TestCase):
 
         self.assertTrue(mock_get.called)
         expected_url_call = TEST_API_URL + '/' + test_path
-        mock_get.assert_called_with(expected_url_call, headers=AUTH_HEADERS)
+        mock_get.assert_called_with(expected_url_call, headers=AUTH_HEADERS, auth=None)
 
     def test_put(self):
 
@@ -56,7 +56,7 @@ class ClientTest(unittest.TestCase):
 
         self.assertTrue(mock_put.called)
         expected_url_call = TEST_API_URL + '/' + test_path
-        mock_put.assert_called_with(expected_url_call, data=test_data, headers=AUTH_HEADERS)
+        mock_put.assert_called_with(expected_url_call, data=test_data, headers=AUTH_HEADERS, auth=None)
 
     def test_delete(self):
 
@@ -71,7 +71,7 @@ class ClientTest(unittest.TestCase):
 
         self.assertTrue(mock_delete.called)
         expected_url_call = TEST_API_URL + '/' + test_path
-        mock_delete.assert_called_with(expected_url_call, headers=AUTH_HEADERS)
+        mock_delete.assert_called_with(expected_url_call, headers=AUTH_HEADERS, auth=None)
 
     def test_get_invalid_response(self):
 
@@ -89,7 +89,7 @@ class ClientTest(unittest.TestCase):
 
         self.assertTrue(mock_get.called)
         expected_url_call = TEST_API_URL + '/' + test_path
-        mock_get.assert_called_with(expected_url_call, headers=AUTH_HEADERS)
+        mock_get.assert_called_with(expected_url_call, headers=AUTH_HEADERS, auth=None)
 
     def test_put_invalid_response(self):
         test_data = {'test': 'test'}
@@ -108,7 +108,7 @@ class ClientTest(unittest.TestCase):
 
         self.assertTrue(mock_put.called)
         expected_url_call = TEST_API_URL + '/' + test_path
-        mock_put.assert_called_with(expected_url_call, data=test_data, headers=AUTH_HEADERS)
+        mock_put.assert_called_with(expected_url_call, data=test_data, headers=AUTH_HEADERS, auth=None)
 
     def test_delete_invalid_response(self):
 
@@ -126,4 +126,4 @@ class ClientTest(unittest.TestCase):
 
         self.assertTrue(mock_delete.called)
         expected_url_call = TEST_API_URL + '/' + test_path
-        mock_delete.assert_called_with(expected_url_call, headers=AUTH_HEADERS)
+        mock_delete.assert_called_with(expected_url_call, headers=AUTH_HEADERS, auth=None)

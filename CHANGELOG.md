@@ -1,3 +1,6 @@
+# 0.3.2
+- Added basic authorization
+
 # 0.3.1
 - Trigger update on save
 - Subscription is_exist method added
