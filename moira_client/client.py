@@ -1,3 +1,4 @@
+from requests.auth import HTTPBasicAuth
 import requests
 
 
@@ -22,7 +23,7 @@ class InvalidJSONError(Exception):
 
 
 class Client:
-    def __init__(self, api_url, login=None):
+    def __init__(self, api_url, login=None, auth_user=None, auth_pass=None):
         """
 
         :param api_url: str Moira API URL
@@ -31,6 +32,12 @@ class Client:
             self.api_url = api_url + '/'
         else:
             self.api_url = api_url
+
+        self.auth = None
+        if auth_user and auth_pass:
+            self.auth = HTTPBasicAuth(auth_user, auth_pass)
+
+        print('self.auth :: ', self.auth)
 
         self.auth_header = {'X-Webauth-User': login}
 
@@ -44,7 +51,7 @@ class Client:
         :raises: HTTPError
         :raises: InvalidJSONError
         """
-        r = requests.get(self._path_join(path), headers=self.auth_header, **kwargs)
+        r = requests.get(self._path_join(path), headers=self.auth_header, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()
@@ -61,7 +68,7 @@ class Client:
         :raises: HTTPError
         :raises: InvalidJSONError
         """
-        r = requests.delete(self._path_join(path), headers=self.auth_header, **kwargs)
+        r = requests.delete(self._path_join(path), headers=self.auth_header, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()
@@ -78,7 +85,7 @@ class Client:
         :raises: HTTPError
         :raises: InvalidJSONError
         """
-        r = requests.put(self._path_join(path), headers=self.auth_header, **kwargs)
+        r = requests.put(self._path_join(path), headers=self.auth_header, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()

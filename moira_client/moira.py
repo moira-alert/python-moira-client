@@ -9,12 +9,12 @@ from .models.trigger import TriggerManager
 
 
 class Moira:
-    def __init__(self, api_url, login=None):
+    def __init__(self, api_url, login=None, **kwargs):
         """
         :param api_url: str API URL
         :param login: str auth login
         """
-        self._client = Client(api_url, login)
+        self._client = Client(api_url, login, **kwargs)
         self._trigger = None
         self._tag = None
         self._event = None
