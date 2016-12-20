@@ -43,7 +43,7 @@ class ContactManager:
             'type': contact_type
         }
 
-        contacts = self.fetch_all()
+        contacts = self.fetch_by_current_user()
         for contact in contacts:
             if contact.value == value and contact.type == contact_type:
                 return contact
@@ -58,7 +58,7 @@ class ContactManager:
         """
         Returns all existing contacts
 
-        :return: list of dicts with contacts
+        :return: list of Contact
 
         :raises: ResponseStructureError
         """
@@ -69,6 +69,25 @@ class ContactManager:
         contacts = []
 
         for contact in result['list']:
+            contacts.append(Contact(**contact))
+
+        return contacts
+
+    def fetch_by_current_user(self):
+        """
+        Returns all contacts by current user
+
+        :return: list of Contact
+
+        :raises: ResponseStructurteError
+        """
+        result = self._client.get('user/settings')
+        if 'contacts' not in result:
+            raise ResponseStructureError("'contacts' field doesn't exist in response", result)
+
+        contacts = []
+
+        for contact in result['contacts']:
             contacts.append(Contact(**contact))
 
         return contacts

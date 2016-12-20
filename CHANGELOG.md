@@ -1,3 +1,6 @@
+# 0.3.3
+- Fixed contact creation. Explore only current user's contacts
+
 # 0.3.2
 - Added basic authorization
 

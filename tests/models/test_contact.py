@@ -24,7 +24,7 @@ class ContactTest(ModelTest):
         contact_id = 1
 
         with patch.object(client, 'put', return_value={'id': contact_id}) as put_mock, \
-                patch.object(client, 'get', return_value={'list': []}) as get_mock:
+                patch.object(client, 'get', return_value={'contacts': []}) as get_mock:
             res_contact = contact_manager.add(contact_value, CONTACT_SLACK)
 
         self.assertTrue(put_mock.called)
@@ -48,7 +48,7 @@ class ContactTest(ModelTest):
         contact_value = '#channel'
 
         with patch.object(client, 'put', return_value={}) as put_mock, \
-                patch.object(client, 'get', return_value={'list': []}) as get_mock:
+                patch.object(client, 'get', return_value={'contacts': []}) as get_mock:
             with self.assertRaises(ResponseStructureError):
                 contact_manager.add(contact_value, CONTACT_SLACK)
 
