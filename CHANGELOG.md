@@ -1,4 +1,5 @@
-# 0.3.4
+# 0.4
+- Added fetch_assigned_triggers_by_tags method for Tag entity
 - Fixed trigger existence check. Check equals by casting to sets
 
 # 0.3.3

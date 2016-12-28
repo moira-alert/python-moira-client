@@ -90,6 +90,35 @@ class TagManager:
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
 
+    def fetch_assigned_triggers_by_tags(self, tags):
+        """
+        Returns triggers assigned to at least one tag of tags
+
+        :param tags: Iterable of tags
+        :return: list of Trigger
+
+        :raises: ResponseStructureError
+        """
+
+        tags = set(tags)
+        result = self._client.get(self._full_path('stats'))
+        if 'list' in result:
+            trigger_manager = TriggerManager(self._client)
+            triggers_id = set()
+            for stat in result['list']:
+                if 'triggers' in stat and 'name' in stat:
+                    if stat['name'] in tags:
+                        for trigger_id in stat['triggers']:
+                            triggers_id.add(trigger_id)
+
+            triggers = []
+            for trigger_id in triggers_id:
+                triggers.append(trigger_manager.fetch_by_id(trigger_id))
+
+            return triggers
+        else:
+            raise ResponseStructureError("list doesn't exist in response", result)
+
     def fetch_assigned_subscriptions(self, tag):
         """
         Returns subscriptions assigned to tag
