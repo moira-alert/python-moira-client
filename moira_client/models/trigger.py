@@ -277,9 +277,9 @@ class TriggerManager:
         """
         try:
             self._client.delete(self._full_path(trigger_id))
-            return True
-        except InvalidJSONError:
             return False
+        except InvalidJSONError:
+            return True
 
     def reset_throttling(self, trigger_id):
         """

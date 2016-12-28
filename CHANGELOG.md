@@ -1,6 +1,7 @@
 # 0.4
 - Added fetch_assigned_triggers_by_tags method for Tag entity
 - Fixed trigger existence check. Check equals by casting to sets
+- Fixed trigger delete logic
 
 # 0.3.3
 - Fixed contact creation. Explore only current user's contacts
