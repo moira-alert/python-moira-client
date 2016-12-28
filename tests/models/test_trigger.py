@@ -35,7 +35,7 @@ class TriggerTest(ModelTest):
         self.assertTrue(get_mock.called)
         get_mock.assert_called_with('trigger/')
 
-    def test_delete(self):
+    def test_delete_fail(self):
         client = Client(self.api_url)
         trigger_manager = TriggerManager(client)
 
@@ -45,10 +45,10 @@ class TriggerTest(ModelTest):
             res = trigger_manager.delete(trigger_id)
 
         self.assertTrue(delete_mock.called)
-        self.assertTrue(res)
+        self.assertFalse(res)
         delete_mock.assert_called_with('trigger/' + trigger_id)
 
-    def test_delete_fail(self):
+    def test_delete(self):
         client = Client(self.api_url)
         trigger_manager = TriggerManager(client)
 
@@ -58,7 +58,7 @@ class TriggerTest(ModelTest):
             res = trigger_manager.delete(trigger_id)
 
         self.assertTrue(delete_mock.called)
-        self.assertFalse(res)
+        self.assertTrue(res)
         delete_mock.assert_called_with('trigger/' + trigger_id)
 
     def test_fetch_by_id(self):
