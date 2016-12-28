@@ -226,8 +226,8 @@ class Trigger(Base):
         trigger_manager = TriggerManager(self._client)
         for trigger in trigger_manager.fetch_all():
             if self.name == trigger.name and \
-                self.targets == trigger.targets and \
-                self.tags == trigger.tags:
+                set(self.targets) == set(trigger.targets) and \
+                set(self.tags) == set(trigger.tags):
                 return trigger
 
 
@@ -327,8 +327,8 @@ class TriggerManager:
         """
         for moira_trigger in self.fetch_all():
             if trigger.name == moira_trigger.name and \
-                trigger.targets == moira_trigger.targets and \
-                trigger.tags == moira_trigger.tags:
+                set(trigger.targets) == set(moira_trigger.targets) and \
+                set(trigger.tags) == set(moira_trigger.tags):
                 return True
         return False
 
@@ -345,8 +345,8 @@ class TriggerManager:
             exist = False
             for moira_trigger in moira_triggers:
                 if trigger.name == moira_trigger.name and \
-                                trigger.targets == moira_trigger.targets and \
-                                trigger.tags == moira_trigger.tags:
+                                set(trigger.targets) == set(moira_trigger.targets) and \
+                                set(trigger.tags) == set(moira_trigger.tags):
                     exist = True
                     break
             if not exist:

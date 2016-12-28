@@ -1,3 +1,6 @@
+# 0.3.4
+- Fixed trigger existence check. Check equals by casting to sets
+
 # 0.3.3
 - Fixed contact creation. Explore only current user's contacts
 
