@@ -31,4 +31,6 @@ class EventManager:
         return result['list']
 
     def _full_path(self, path=''):
-        return 'event/' + path
+        if path:
+            return 'event/' + path
+        return 'event'

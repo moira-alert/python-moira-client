@@ -23,4 +23,6 @@ class NotificationManager:
         return result['list']
 
     def _full_path(self, path=''):
-        return 'notification/' + path
+        if path:
+            return 'notification/' + path
+        return 'notification'

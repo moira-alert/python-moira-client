@@ -51,4 +51,6 @@ class PatternManager:
             return True
 
     def _full_path(self, path=''):
-        return 'pattern/' + path
+        if path:
+            return 'pattern/' + path
+        return 'pattern'

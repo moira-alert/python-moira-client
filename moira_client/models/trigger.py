@@ -24,7 +24,7 @@ class Trigger(Base):
             warn_value=None,
             error_value=None,
             tags=None,
-            ttl='600',
+            ttl=600,
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
@@ -41,7 +41,7 @@ class Trigger(Base):
         :param ttl: str set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str python expression
+        :param expression: str c_sharp expression
         :param kwargs: additional parameters
         """
         self._client = client
@@ -362,7 +362,7 @@ class TriggerManager:
             warn_value=None,
             error_value=None,
             tags=None,
-            ttl='600',
+            ttl=600,
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
@@ -379,7 +379,7 @@ class TriggerManager:
         :param ttl: str set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str python expression
+        :param expression: str c_sharp expression
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -399,4 +399,6 @@ class TriggerManager:
         )
 
     def _full_path(self, path=''):
-        return 'trigger/' + path
+        if path:
+            return 'trigger/' + path
+        return 'trigger'
