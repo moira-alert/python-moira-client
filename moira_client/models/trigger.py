@@ -18,11 +18,11 @@ class Trigger(Base):
     def __init__(
             self,
             client,
-            name,
             targets,
+            warn_value,
+            error_value,
+            name='',
             desc='',
-            warn_value=None,
-            error_value=None,
             tags=None,
             ttl=600,
             ttl_state=STATE_NODATA,
@@ -117,20 +117,22 @@ class Trigger(Base):
 
     def _send_request(self, trigger_id=None):
         data = {
-            'name': self.name,
-            'desc': self.desc,
             'targets': self.targets,
             'warn_value': self.warn_value,
             'error_value': self.error_value,
+            'name': self.name,
+            'desc': self.desc,
+            'tags': self.tags,
             'ttl': self.ttl,
             'ttl_state': self.ttl_state,
-            'tags': self.tags,
             'sched': self.sched,
             'expression': self.expression
         }
 
         if trigger_id:
             data['id'] = trigger_id
+            api_response = TriggerManager(
+                self._client).fetch_by_id(trigger_id)
 
         data['sched']['days'] = []
         for day in DAYS_OF_WEEK:
@@ -143,7 +145,7 @@ class Trigger(Base):
         data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
         data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
 
-        if trigger_id:
+        if trigger_id and api_response is not None:
             res = self._client.put('trigger/' + trigger_id, json=data)
         else:
             res = self._client.put('trigger', json=data)
@@ -262,12 +264,13 @@ class TriggerManager:
         :param trigger_id: str trigger id
         :return: Trigger
         """
-        result = self._client.get(self._full_path())
-        if 'list' in result:
-            for trigger in result['list']:
-                if 'id' in trigger:
-                    if trigger['id'] == trigger_id:
-                        return Trigger(self._client, **trigger)
+        try:
+            trigger = self._client.get(self._full_path(trigger_id))
+            return Trigger(self._client, **trigger)
+        except Exception as e:
+            if hasattr(e, 'response') and \
+               e.response.status_code == 404:
+                return None
 
     def delete(self, trigger_id):
         """
@@ -356,11 +359,11 @@ class TriggerManager:
 
     def create(
             self,
-            name,
             targets,
+            warn_value,
+            error_value,
+            name='',
             desc='',
-            warn_value=None,
-            error_value=None,
             tags=None,
             ttl=600,
             ttl_state=STATE_NODATA,
@@ -385,11 +388,11 @@ class TriggerManager:
         """
         return Trigger(
             self._client,
-            name,
             targets,
-            desc,
             warn_value,
             error_value,
+            name,
+            desc,
             tags,
             ttl,
             ttl_state,
