@@ -26,7 +26,7 @@ moira = Moira('http://localhost:8888/api/')
 from moira_client.models.trigger import STATE_ERROR
 
 trigger = moira.trigger.create(
-    name='trigger_name', 
+    name='trigger_name',
     targets=['metric.rps', 'another_metric.rps'],
     desc='my trigger',
     warn_value=300,
@@ -51,7 +51,7 @@ for trigger in triggers:
 
 ### Delete trigger
 ```
-trigger = moira.trigger.get_by_id('bb1a8514-128b-406e-bec3-25e94153ab30')
+trigger = moira.trigger.fetch_by_id('bb1a8514-128b-406e-bec3-25e94153ab30')
 moira.trigger.delete(trigger.id)
 ```
 
