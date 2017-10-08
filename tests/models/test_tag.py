@@ -22,7 +22,7 @@ class TagTest(ModelTest):
             tag_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('tag/')
+        get_mock.assert_called_with('tag')
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -33,7 +33,7 @@ class TagTest(ModelTest):
                 tag_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('tag/')
+        get_mock.assert_called_with('tag')
 
     def test_delete(self):
         client = Client(self.api_url)
@@ -165,7 +165,7 @@ class TagTest(ModelTest):
             triggers = tag_manager.fetch_assigned_triggers(tag_name)
 
             self.assertTrue(get_mock.called)
-            get_mock.assert_called_with('trigger/')
+            get_mock.assert_called_with('trigger/123')
             self.assertEqual(1, len(triggers))
 
     def test_fetch_assigned_subscriptions(self):

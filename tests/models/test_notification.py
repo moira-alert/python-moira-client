@@ -21,7 +21,7 @@ class NotificationTest(ModelTest):
         params = {'end': -1, 'start': 0}
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('notification/', params=params)
+        get_mock.assert_called_with('notification', params=params)
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -34,4 +34,4 @@ class NotificationTest(ModelTest):
         params = {'end': -1, 'start': 0}
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('notification/', params=params)
+        get_mock.assert_called_with('notification', params=params)

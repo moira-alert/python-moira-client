@@ -145,7 +145,7 @@ class Trigger(Base):
         data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
         data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
 
-        if trigger_id and api_response is not None:
+        if trigger_id and api_response:
             res = self._client.put('trigger/' + trigger_id, json=data)
         else:
             res = self._client.put('trigger', json=data)
@@ -264,13 +264,14 @@ class TriggerManager:
         :param trigger_id: str trigger id
         :return: Trigger
         """
-        try:
+        result = self.get_state(trigger_id)
+        if 'state' in result:
             trigger = self._client.get(self._full_path(trigger_id))
             return Trigger(self._client, **trigger)
-        except Exception as e:
-            if hasattr(e, 'response') and \
-               e.response.status_code == 404:
-                return None
+        elif not 'trigger_id' in result:
+            raise ResponseStructureError("invalid api response", result)
+        else:
+            return None
 
     def delete(self, trigger_id):
         """

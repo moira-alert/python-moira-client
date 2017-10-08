@@ -39,7 +39,7 @@ class ContactTest(ModelTest):
 
         self.assertEqual(expected_contact, res_contact)
 
-        put_mock.assert_called_with('contact/', json=expected_request_data)
+        put_mock.assert_called_with('contact', json=expected_request_data)
 
     def test_add_bad_response(self):
         client = Client(self.api_url)
@@ -58,7 +58,7 @@ class ContactTest(ModelTest):
             'value': contact_value,
             'type': CONTACT_SLACK
         }
-        put_mock.assert_called_with('contact/', json=expected_request_data)
+        put_mock.assert_called_with('contact', json=expected_request_data)
 
     def test_fetch_all(self):
         client = Client(self.api_url)
@@ -68,7 +68,7 @@ class ContactTest(ModelTest):
             contact_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('contact/')
+        get_mock.assert_called_with('contact')
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -79,7 +79,7 @@ class ContactTest(ModelTest):
                 contact_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('contact/')
+        get_mock.assert_called_with('contact')
 
     def test_delete(self):
         client = Client(self.api_url)

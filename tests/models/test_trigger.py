@@ -22,7 +22,7 @@ class TriggerTest(ModelTest):
             trigger_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('trigger/')
+        get_mock.assert_called_with('trigger')
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -33,7 +33,7 @@ class TriggerTest(ModelTest):
                 trigger_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('trigger/')
+        get_mock.assert_called_with('trigger')
 
     def test_delete_fail(self):
         client = Client(self.api_url)
@@ -68,13 +68,14 @@ class TriggerTest(ModelTest):
         trigger_id = '1'
 
         return_value = {
-            'list': [
-                {
-                    'id': trigger_id,
-                    'name': 'trigger_name',
-                    'targets': ['pattern']
-                }
-            ]
+            {
+                'state': 'OK',
+                'id': trigger_id,
+                'name': 'trigger_name',
+                'targets': ['pattern'],
+                'warn_value': 0,
+                'error_value': 1
+            }
         }
         with patch.object(client, 'get', return_value=return_value) as get_mock:
             trigger = trigger_manager.fetch_by_id(trigger_id)
