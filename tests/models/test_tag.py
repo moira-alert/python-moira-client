@@ -136,7 +136,9 @@ class TagTest(ModelTest):
                     ],
                     'triggers': [trigger_id]
                 }
-            ]
+            ],
+            'state': 'OK',
+            'trigger_id': trigger_id
         }
 
         with patch.object(client, 'get', return_value=return_value) as get_mock:
@@ -156,7 +158,6 @@ class TagTest(ModelTest):
         return_value = {
             'list': [
                 {
-                    'data': extra_data,
                     'name': tag_name,
                     'subscriptions': [
                         {
