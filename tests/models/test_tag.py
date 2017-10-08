@@ -138,7 +138,11 @@ class TagTest(ModelTest):
                 }
             ],
             'state': 'OK',
-            'trigger_id': trigger_id
+            'id': trigger_id,
+            'name': trigger_id,
+            'targets': ['pattern'],
+            'warn_value': 0,
+            'error_value': 1
         }
 
         with patch.object(client, 'get', return_value=return_value) as get_mock:
