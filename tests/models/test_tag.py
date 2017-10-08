@@ -64,15 +64,11 @@ class TagTest(ModelTest):
     def test_stats(self):
         client = Client(self.api_url)
         tag_manager = TagManager(client)
-        extra_data = {
-            'key': 'value'
-        }
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         return_value = {
             'list': [
                 {
-                    'data': extra_data,
                     'name': tag_name,
                     'subscriptions': [
                         {
@@ -103,39 +99,21 @@ class TagTest(ModelTest):
 
             self.assertTrue(get_mock.called)
             self.assertEqual(1, len(stats))
-            self.assertEqual(extra_data, stats[0].data)
             self.assertEqual(tag_name, stats[0].name)
             self.assertEqual(1, len(stats[0].subscriptions))
             self.assertEqual(subscription_id, stats[0].subscriptions[0].id)
 
-    def test_add_data(self):
-        client = Client(self.api_url)
-        tag_manager = TagManager(client)
-        tag_name = 'tag_name'
-        data = {
-            'key': 'value'
-        }
-
-        with patch.object(client, 'put', side_effect=ResponseStructureError('', b'')) as get_mock:
-            result = tag_manager.add_data(tag_name, data)
-
-            self.assertTrue(get_mock.called)
-            self.assertTrue(result)
 
     def test_fetch_assigned_triggers(self):
         client = Client(self.api_url)
         tag_manager = TagManager(client)
 
-        extra_data = {
-            'key': 'value'
-        }
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         trigger_id = '123'
         return_value = {
             'list': [
                 {
-                    'data': extra_data,
                     'name': tag_name,
                     'subscriptions': [
                         {
@@ -172,9 +150,6 @@ class TagTest(ModelTest):
         client = Client(self.api_url)
         tag_manager = TagManager(client)
 
-        extra_data = {
-            'key': 'value'
-        }
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         trigger_id = '123'

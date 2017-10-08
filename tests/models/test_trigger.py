@@ -68,15 +68,14 @@ class TriggerTest(ModelTest):
         trigger_id = '1'
 
         return_value = {
-            {
-                'state': 'OK',
-                'id': trigger_id,
-                'name': 'trigger_name',
-                'targets': ['pattern'],
-                'warn_value': 0,
-                'error_value': 1
+            'state': 'OK',
+            'id': trigger_id,
+            'name': 'trigger_name',
+            'targets': ['pattern'],
+            'warn_value': 0,
+            'error_value': 1
             }
-        }
+
         with patch.object(client, 'get', return_value=return_value) as get_mock:
             trigger = trigger_manager.fetch_by_id(trigger_id)
 
