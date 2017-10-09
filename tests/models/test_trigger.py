@@ -67,8 +67,12 @@ class TriggerTest(ModelTest):
 
         trigger_id = '1'
 
-        return_value = {
+        state = {
             'state': 'OK',
+            'trigger_id': trigger_id
+            }
+
+        trigger = {
             'id': trigger_id,
             'name': 'trigger_name',
             'targets': ['pattern'],
@@ -76,7 +80,7 @@ class TriggerTest(ModelTest):
             'error_value': 1
             }
 
-        with patch.object(client, 'get', return_value=return_value) as get_mock:
+        with patch.object(client, 'get', side_effect=[state, trigger]) as get_mock:
             trigger = trigger_manager.fetch_by_id(trigger_id)
 
             self.assertTrue(get_mock.called)
