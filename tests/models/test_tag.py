@@ -111,7 +111,7 @@ class TagTest(ModelTest):
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         trigger_id = '123'
-        return_value = {
+        stats = {
             'list': [
                 {
                     'name': tag_name,
@@ -136,16 +136,19 @@ class TagTest(ModelTest):
                     ],
                     'triggers': [trigger_id]
                 }
-            ],
+            ]
+        }
+
+        trigger = {
             'state': 'OK',
             'id': trigger_id,
-            'name': trigger_id,
+            'name': 'name',
             'targets': ['pattern'],
             'warn_value': 0,
             'error_value': 1
-        }
+            }
 
-        with patch.object(client, 'get', return_value=return_value) as get_mock:
+        with patch.object(client, 'get', side_effect=[stats, trigger]) as get_mock:
             triggers = tag_manager.fetch_assigned_triggers(tag_name)
 
             self.assertTrue(get_mock.called)
