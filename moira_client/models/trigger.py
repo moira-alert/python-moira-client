@@ -38,7 +38,7 @@ class Trigger(Base):
         :param warn_value: int warning value (if T1 <= warn_value)
         :param error_value: int error value (if T1 <= error_value)
         :param tags: list of str tags for trigger
-        :param ttl: str set ttl_state if has no value for ttl seconds
+        :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
         :param expression: str c_sharp expression
@@ -80,6 +80,7 @@ class Trigger(Base):
     def add_target(self, target):
         """
         Add pattern name
+
         :param target: str target pattern
         :return: None
         """
@@ -88,6 +89,7 @@ class Trigger(Base):
     def add_tag(self, tag):
         """
         Add tag to trigger
+
         :param tag: str tag name
         :return: None
         """
@@ -184,7 +186,6 @@ class Trigger(Base):
         Set start hour
 
         :param hour: int hour
-
         :return: None
         """
         self._start_hour = int(hour)
@@ -194,7 +195,6 @@ class Trigger(Base):
         Set start minute
 
         :param minute: int minute
-
         :return: None
         """
         self._start_minute = int(minute)
@@ -204,7 +204,6 @@ class Trigger(Base):
         Set end hour
 
         :param hour: int hour
-
         :return: None
         """
         self._end_hour = int(hour)
@@ -214,7 +213,6 @@ class Trigger(Base):
         Set end minute
 
         :param minute: int minute
-
         :return: None
         """
         self._end_minute = int(minute)
@@ -261,21 +259,23 @@ class TriggerManager:
     def fetch_by_id(self, trigger_id):
         """
         Returns Trigger by trigger id
+
         :param trigger_id: str trigger id
         :return: Trigger
+
+        :raises: ResponseStructureError
         """
-        result = self.get_state(trigger_id)
+        result = self._client.get(self._full_path(trigger_id + '/state'))
         if 'state' in result:
             trigger = self._client.get(self._full_path(trigger_id))
             return Trigger(self._client, **trigger)
         elif not 'trigger_id' in result:
             raise ResponseStructureError("invalid api response", result)
-        else:
-            return None
 
     def delete(self, trigger_id):
         """
         Delete trigger by trigger id
+
         :param trigger_id: str trigger id
         :return: True if deleted, False otherwise
         """
@@ -288,6 +288,7 @@ class TriggerManager:
     def reset_throttling(self, trigger_id):
         """
         Resets throttling by trigger id
+
         :param trigger_id: str trigger id
         :return: True if reset, False otherwise
         """
@@ -300,6 +301,7 @@ class TriggerManager:
     def get_state(self, trigger_id):
         """
         Get state of trigger by trigger id
+
         :param trigger_id: str trigger id
         :return: state of trigger
         """
@@ -308,6 +310,7 @@ class TriggerManager:
     def remove_metric(self, trigger_id, metric):
         """
         Remove metric by trigger id
+
         :param trigger_id: str trigger id
         :param metric: str metric name
         :return: True if removed, False otherwise
@@ -380,7 +383,7 @@ class TriggerManager:
         :param warn_value: int warning value (if T1 <= warn_value)
         :param error_value: int error value (if T1 <= error_value)
         :param tags: list of str tags for trigger
-        :param ttl: str set ttl_state if has no value for ttl seconds
+        :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
         :param expression: str c_sharp expression
