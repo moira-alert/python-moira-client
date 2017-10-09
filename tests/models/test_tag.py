@@ -140,7 +140,7 @@ class TagTest(ModelTest):
         }
 
         state = {
-            'state': 'OK'
+            'state': 'OK',
             'trigger_id': trigger_id
             }
 
