@@ -33,28 +33,29 @@ class Trigger(Base):
 
         :param client: api client
         :param name: str trigger name
+        :param tags: list of str tags for trigger
         :param targets: list of str targets
-        :param desc: str trigger description
         :param warn_value: float warning value (if T1 <= warn_value)
         :param error_value: float error value (if T1 <= error_value)
-        :param tags: list of str tags for trigger
+        :param desc: str trigger description
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str c_sharp expression
+        :param expression: str govaluate expression
         :param kwargs: additional parameters
         """
         self._client = client
 
         self._id = kwargs.get('id', None)
         self.name = name
-        self.desc = desc
+        self.tags = tags
         self.targets = targets
         self.warn_value = warn_value
         self.error_value = error_value
+        self.desc = desc
         self.ttl = ttl
         self.ttl_state = ttl_state
-        self.tags = tags
+        
         default_sched = {
             'startOffset': 0,
             'endOffset': 1439,
@@ -117,12 +118,12 @@ class Trigger(Base):
 
     def _send_request(self, trigger_id=None):
         data = {
+            'name': self.name,
+            'tags': self.tags,
             'targets': self.targets,
             'warn_value': self.warn_value,
             'error_value': self.error_value,
-            'name': self.name,
             'desc': self.desc,
-            'tags': self.tags,
             'ttl': self.ttl,
             'ttl_state': self.ttl_state,
             'sched': self.sched,
@@ -376,15 +377,15 @@ class TriggerManager:
         """
         Creates new trigger. To save it call save() method of Trigger.
         :param name: str trigger name
+        :param tags: list of str tags for trigger
         :param targets: list of str targets
-        :param desc: str trigger description
         :param warn_value: float warning value (if T1 <= warn_value)
         :param error_value: float error value (if T1 <= error_value)
-        :param tags: list of str tags for trigger
+        :param desc: str trigger description
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str c_sharp expression
+        :param expression: str govaluate expression
         :param kwargs: additional trigger params
         :return: Trigger
         """
