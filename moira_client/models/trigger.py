@@ -18,12 +18,12 @@ class Trigger(Base):
     def __init__(
             self,
             client,
+            name,
+            tags,
             targets,
             warn_value,
             error_value,
-            name='',
             desc='',
-            tags=None,
             ttl=600,
             ttl_state=STATE_NODATA,
             sched=None,
@@ -35,8 +35,8 @@ class Trigger(Base):
         :param name: str trigger name
         :param targets: list of str targets
         :param desc: str trigger description
-        :param warn_value: int warning value (if T1 <= warn_value)
-        :param error_value: int error value (if T1 <= error_value)
+        :param warn_value: float warning value (if T1 <= warn_value)
+        :param error_value: float error value (if T1 <= error_value)
         :param tags: list of str tags for trigger
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
@@ -54,8 +54,6 @@ class Trigger(Base):
         self.error_value = error_value
         self.ttl = ttl
         self.ttl_state = ttl_state
-        if not tags:
-            tags = []
         self.tags = tags
         default_sched = {
             'startOffset': 0,
@@ -363,12 +361,12 @@ class TriggerManager:
 
     def create(
             self,
+            name,
+            tags,
             targets,
             warn_value,
             error_value,
-            name='',
             desc='',
-            tags=None,
             ttl=600,
             ttl_state=STATE_NODATA,
             sched=None,
@@ -380,8 +378,8 @@ class TriggerManager:
         :param name: str trigger name
         :param targets: list of str targets
         :param desc: str trigger description
-        :param warn_value: int warning value (if T1 <= warn_value)
-        :param error_value: int error value (if T1 <= error_value)
+        :param warn_value: float warning value (if T1 <= warn_value)
+        :param error_value: float error value (if T1 <= error_value)
         :param tags: list of str tags for trigger
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
@@ -392,12 +390,12 @@ class TriggerManager:
         """
         return Trigger(
             self._client,
+            name,
+            tags,
             targets,
             warn_value,
             error_value,
-            name,
             desc,
-            tags,
             ttl,
             ttl_state,
             sched,

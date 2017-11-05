@@ -26,7 +26,8 @@ moira = Moira('http://localhost:8888/api/')
 from moira_client.models.trigger import STATE_ERROR
 
 trigger = moira.trigger.create(
-    name='trigger_name',
+    id='trigger_name',
+    name='Trigger name',
     targets=['metric.rps', 'another_metric.rps'],
     desc='my trigger',
     warn_value=300,
