@@ -18,7 +18,7 @@ class EventTest(ModelTest):
         contact_manager = EventManager(client)
 
         trigger_id = '1'
-        trigger = Trigger(client, ['target'], 0, 1, id=trigger_id)
+        trigger = Trigger(client, 'Name', ['tag'], ['target'], 0, 1, id=trigger_id)
 
         with patch.object(client, 'get', return_value={'list': []}) as get_mock:
             contact_manager.fetch_by_trigger(trigger)
@@ -37,7 +37,7 @@ class EventTest(ModelTest):
         contact_manager = EventManager(client)
 
         trigger_id = '1'
-        trigger = Trigger(client, ['target'], 0, 1, id=trigger_id)
+        trigger = Trigger(client, 'Name', ['tag'], ['target'], 0, 1, id=trigger_id)
 
         with patch.object(client, 'get', return_value={}) as get_mock:
             with self.assertRaises(ResponseStructureError):

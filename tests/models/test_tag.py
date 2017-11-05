@@ -147,6 +147,7 @@ class TagTest(ModelTest):
         trigger = {
             'id': trigger_id,
             'name': 'name',
+            'tags': ['tag'],
             'targets': ['pattern'],
             'warn_value': 0,
             'error_value': 1
