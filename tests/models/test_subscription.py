@@ -22,7 +22,7 @@ class SubscriptionTest(ModelTest):
             subscription_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('subscription/')
+        get_mock.assert_called_with('subscription')
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -33,7 +33,7 @@ class SubscriptionTest(ModelTest):
                 subscription_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('subscription/')
+        get_mock.assert_called_with('subscription')
 
     def test_delete_fail(self):
         client = Client(self.api_url)
