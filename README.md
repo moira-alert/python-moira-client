@@ -26,10 +26,10 @@ moira = Moira('http://localhost:8888/api/')
 from moira_client.models.trigger import STATE_ERROR
 
 trigger = moira.trigger.create(
-    id='Trigger Name',
+    id='service_trigger_name',
     name='Trigger name',
     tags=['service'],
-    targets=['graphite.prefix.*.postfix'],
+    targets=['prefix.service.*.postfix'],
     warn_value=300,
     error_value=600,
     desc='my trigger',
