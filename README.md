@@ -26,13 +26,13 @@ moira = Moira('http://localhost:8888/api/')
 from moira_client.models.trigger import STATE_ERROR
 
 trigger = moira.trigger.create(
-    id='trigger_name',
+    id='Trigger Name',
     name='Trigger name',
-    targets=['metric.rps', 'another_metric.rps'],
-    desc='my trigger',
+    tags=['service'],
+    targets=['graphite.prefix.*.postfix'],
     warn_value=300,
     error_value=600,
-    tags=['service'],
+    desc='my trigger',
     ttl_state=STATE_ERROR
 )
 
@@ -40,6 +40,10 @@ trigger.disable_day('Tue')
 trigger.save()
 print(trigger.id)
 ```
+
+> **Note:** 'id' parameter is not required but recommended for large <br>
+> production solutions (e.q. fetch_by_id will work faster than is_exist). <br>
+> If parameter is not specified, random trigger guid will be generated.
 
 ### Update triggers
 Turn off all triggers for Monday.

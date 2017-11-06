@@ -41,7 +41,7 @@ class Trigger(Base):
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str govaluate expression
+        :param expression: str golang expression
         :param kwargs: additional parameters
         """
         self._client = client
@@ -385,7 +385,7 @@ class TriggerManager:
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str govaluate expression
+        :param expression: str golang expression
         :param kwargs: additional trigger params
         :return: Trigger
         """
