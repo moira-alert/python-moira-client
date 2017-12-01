@@ -23,13 +23,14 @@ class InvalidJSONError(Exception):
 
 
 class Client:
-    def __init__(self, api_url, auth_custom=None, auth_user=None, auth_pass=None):
+    def __init__(self, api_url, auth_custom=None, auth_user=None, auth_pass=None, login=None):
         """
 
         :param api_url: str Moira API URL
         :param auth_custom: dict auth custom headers
         :param auth_user: str auth user
         :param auth_pass: str auth password
+        :param login: str auth login
         """
         if not api_url.endswith('/'):
             self.api_url = api_url + '/'
@@ -37,10 +38,13 @@ class Client:
             self.api_url = api_url
 
         self.auth = None
+        self.auth_custom = {'X-Webauth-User': login}
+
         if auth_user and auth_pass:
             self.auth = HTTPBasicAuth(auth_user, auth_pass)
 
-        self.auth_custom = auth_custom
+        if auth_custom:
+            self.auth_custom.update(auth_custom)
 
     def get(self, path='', **kwargs):
         """
