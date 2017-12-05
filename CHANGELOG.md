@@ -1,5 +1,5 @@
 # 2.0
-- Changed {'X-Webauth-User': login} to custom headers support
+- Added custom headers support
 - Added trigger creation by custom id
 - Removed tags extra data addition feature
 - Changed ttl type from string to int
