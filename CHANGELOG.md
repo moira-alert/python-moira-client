@@ -1,3 +1,10 @@
+# 2.0
+- Added custom headers support
+- Added trigger creation by custom id
+- Removed tags extra data addition feature
+- Changed ttl type from string to int
+- Optimized fetch_by_id for large production solutions
+
 # 0.4
 - Added fetch_assigned_triggers_by_tags method for Tag entity
 - Fixed trigger existence check. Check equals by casting to sets
@@ -20,7 +27,7 @@
 
 # 0.2
 - TriggerManager is_exist function added
-- TriggerManager get_non_existent function added 
+- TriggerManager get_non_existent function added
 
 # 0.1.1
 - Trigger exist check added

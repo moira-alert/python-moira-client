@@ -125,4 +125,6 @@ class ContactManager:
                 return False
 
     def _full_path(self, path=''):
-        return 'contact/' + path
+        if path:
+            return 'contact/' + path
+        return 'contact'

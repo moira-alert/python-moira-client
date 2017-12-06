@@ -9,7 +9,7 @@ from moira_client.client import Client
 from moira_client.client import InvalidJSONError
 
 TEST_API_URL = 'http://test/api/url'
-AUTH_HEADERS = {'X-Webauth-User': None}
+AUTH_HEADERS = {'X-Webauth-User': 'login'}
 
 
 class FakeResponse:
@@ -35,7 +35,7 @@ class ClientTest(unittest.TestCase):
         with patch.object(requests, 'get', side_effects=get) as mock_get:
             test_path = 'test_path'
 
-            client = Client(TEST_API_URL)
+            client = Client(TEST_API_URL, AUTH_HEADERS)
             client.get(test_path)
 
         self.assertTrue(mock_get.called)
@@ -51,7 +51,7 @@ class ClientTest(unittest.TestCase):
             test_path = 'test_path'
             test_data = {'test': 'test'}
 
-            client = Client(TEST_API_URL)
+            client = Client(TEST_API_URL, AUTH_HEADERS)
             client.put(test_path, data=test_data)
 
         self.assertTrue(mock_put.called)
@@ -66,7 +66,7 @@ class ClientTest(unittest.TestCase):
         with patch.object(requests, 'delete', side_effects=delete) as mock_delete:
             test_path = 'test_path'
 
-            client = Client(TEST_API_URL)
+            client = Client(TEST_API_URL, AUTH_HEADERS)
             client.delete(test_path)
 
         self.assertTrue(mock_delete.called)
@@ -83,7 +83,7 @@ class ClientTest(unittest.TestCase):
         with patch.object(requests, 'get', side_effects=get, return_value=response) as mock_get:
             test_path = 'test_path'
 
-            client = Client(TEST_API_URL)
+            client = Client(TEST_API_URL, AUTH_HEADERS)
             with self.assertRaises(InvalidJSONError):
                 client.get(test_path)
 
@@ -102,7 +102,7 @@ class ClientTest(unittest.TestCase):
         with patch.object(requests, 'put', side_effects=put, return_value=response) as mock_put:
             test_path = 'test_path'
 
-            client = Client(TEST_API_URL)
+            client = Client(TEST_API_URL, AUTH_HEADERS)
             with self.assertRaises(InvalidJSONError):
                 client.put(test_path, data=test_data)
 
@@ -120,7 +120,7 @@ class ClientTest(unittest.TestCase):
         with patch.object(requests, 'delete', side_effects=delete, return_value=response) as mock_delete:
             test_path = 'test_path'
 
-            client = Client(TEST_API_URL)
+            client = Client(TEST_API_URL, AUTH_HEADERS)
             with self.assertRaises(InvalidJSONError):
                 client.delete(test_path)
 

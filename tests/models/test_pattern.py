@@ -22,7 +22,7 @@ class PatternTest(ModelTest):
             pattern_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('pattern/')
+        get_mock.assert_called_with('pattern')
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -33,7 +33,7 @@ class PatternTest(ModelTest):
                 pattern_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('pattern/')
+        get_mock.assert_called_with('pattern')
 
     def test_delete(self):
         client = Client(self.api_url)

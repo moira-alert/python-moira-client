@@ -23,13 +23,14 @@ class InvalidJSONError(Exception):
 
 
 class Client:
-    def __init__(self, api_url, login=None, auth_user=None, auth_pass=None):
+    def __init__(self, api_url, auth_custom=None, auth_user=None, auth_pass=None, login=None):
         """
 
         :param api_url: str Moira API URL
-        :param login: str auth login
+        :param auth_custom: dict auth custom headers
         :param auth_user: str auth user
         :param auth_pass: str auth password
+        :param login: str auth login
         """
         if not api_url.endswith('/'):
             self.api_url = api_url + '/'
@@ -37,10 +38,13 @@ class Client:
             self.api_url = api_url
 
         self.auth = None
+        self.auth_custom = {'X-Webauth-User': login}
+
         if auth_user and auth_pass:
             self.auth = HTTPBasicAuth(auth_user, auth_pass)
 
-        self.auth_header = {'X-Webauth-User': login}
+        if auth_custom:
+            self.auth_custom.update(auth_custom)
 
     def get(self, path='', **kwargs):
         """
@@ -52,7 +56,7 @@ class Client:
         :raises: HTTPError
         :raises: InvalidJSONError
         """
-        r = requests.get(self._path_join(path), headers=self.auth_header, auth=self.auth, **kwargs)
+        r = requests.get(self._path_join(path), headers=self.auth_custom, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()
@@ -69,7 +73,7 @@ class Client:
         :raises: HTTPError
         :raises: InvalidJSONError
         """
-        r = requests.delete(self._path_join(path), headers=self.auth_header, auth=self.auth, **kwargs)
+        r = requests.delete(self._path_join(path), headers=self.auth_custom, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()
@@ -86,7 +90,7 @@ class Client:
         :raises: HTTPError
         :raises: InvalidJSONError
         """
-        r = requests.put(self._path_join(path), headers=self.auth_header, auth=self.auth, **kwargs)
+        r = requests.put(self._path_join(path), headers=self.auth_custom, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()
@@ -96,8 +100,5 @@ class Client:
     def _path_join(self, *args):
         path = self.api_url
         for part in args:
-            if part.startswith('/'):
-                path += part[1:]
-            else:
-                path += part
+            path += part
         return path

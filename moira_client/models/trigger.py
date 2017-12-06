@@ -19,12 +19,12 @@ class Trigger(Base):
             self,
             client,
             name,
+            tags,
             targets,
+            warn_value,
+            error_value,
             desc='',
-            warn_value=None,
-            error_value=None,
-            tags=None,
-            ttl='600',
+            ttl=600,
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
@@ -33,30 +33,29 @@ class Trigger(Base):
 
         :param client: api client
         :param name: str trigger name
-        :param targets: list of str targets
-        :param desc: str trigger description
-        :param warn_value: int warning value (if T1 <= warn_value)
-        :param error_value: int error value (if T1 <= error_value)
         :param tags: list of str tags for trigger
-        :param ttl: str set ttl_state if has no value for ttl seconds
+        :param targets: list of str targets
+        :param warn_value: float warning value (if T1 <= warn_value)
+        :param error_value: float error value (if T1 <= error_value)
+        :param desc: str trigger description
+        :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str python expression
+        :param expression: str c-like expression
         :param kwargs: additional parameters
         """
         self._client = client
 
         self._id = kwargs.get('id', None)
         self.name = name
-        self.desc = desc
+        self.tags = tags
         self.targets = targets
         self.warn_value = warn_value
         self.error_value = error_value
+        self.desc = desc
         self.ttl = ttl
         self.ttl_state = ttl_state
-        if not tags:
-            tags = []
-        self.tags = tags
+        
         default_sched = {
             'startOffset': 0,
             'endOffset': 1439,
@@ -80,6 +79,7 @@ class Trigger(Base):
     def add_target(self, target):
         """
         Add pattern name
+
         :param target: str target pattern
         :return: None
         """
@@ -88,6 +88,7 @@ class Trigger(Base):
     def add_tag(self, tag):
         """
         Add tag to trigger
+
         :param tag: str tag name
         :return: None
         """
@@ -118,19 +119,21 @@ class Trigger(Base):
     def _send_request(self, trigger_id=None):
         data = {
             'name': self.name,
-            'desc': self.desc,
+            'tags': self.tags,
             'targets': self.targets,
             'warn_value': self.warn_value,
             'error_value': self.error_value,
+            'desc': self.desc,
             'ttl': self.ttl,
             'ttl_state': self.ttl_state,
-            'tags': self.tags,
             'sched': self.sched,
             'expression': self.expression
         }
 
         if trigger_id:
             data['id'] = trigger_id
+            api_response = TriggerManager(
+                self._client).fetch_by_id(trigger_id)
 
         data['sched']['days'] = []
         for day in DAYS_OF_WEEK:
@@ -143,7 +146,7 @@ class Trigger(Base):
         data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
         data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
 
-        if trigger_id:
+        if trigger_id and api_response:
             res = self._client.put('trigger/' + trigger_id, json=data)
         else:
             res = self._client.put('trigger', json=data)
@@ -182,7 +185,6 @@ class Trigger(Base):
         Set start hour
 
         :param hour: int hour
-
         :return: None
         """
         self._start_hour = int(hour)
@@ -192,7 +194,6 @@ class Trigger(Base):
         Set start minute
 
         :param minute: int minute
-
         :return: None
         """
         self._start_minute = int(minute)
@@ -202,7 +203,6 @@ class Trigger(Base):
         Set end hour
 
         :param hour: int hour
-
         :return: None
         """
         self._end_hour = int(hour)
@@ -212,7 +212,6 @@ class Trigger(Base):
         Set end minute
 
         :param minute: int minute
-
         :return: None
         """
         self._end_minute = int(minute)
@@ -259,19 +258,23 @@ class TriggerManager:
     def fetch_by_id(self, trigger_id):
         """
         Returns Trigger by trigger id
+
         :param trigger_id: str trigger id
         :return: Trigger
+
+        :raises: ResponseStructureError
         """
-        result = self._client.get(self._full_path())
-        if 'list' in result:
-            for trigger in result['list']:
-                if 'id' in trigger:
-                    if trigger['id'] == trigger_id:
-                        return Trigger(self._client, **trigger)
+        result = self._client.get(self._full_path(trigger_id + '/state'))
+        if 'state' in result:
+            trigger = self._client.get(self._full_path(trigger_id))
+            return Trigger(self._client, **trigger)
+        elif not 'trigger_id' in result:
+            raise ResponseStructureError("invalid api response", result)
 
     def delete(self, trigger_id):
         """
         Delete trigger by trigger id
+
         :param trigger_id: str trigger id
         :return: True if deleted, False otherwise
         """
@@ -284,6 +287,7 @@ class TriggerManager:
     def reset_throttling(self, trigger_id):
         """
         Resets throttling by trigger id
+
         :param trigger_id: str trigger id
         :return: True if reset, False otherwise
         """
@@ -296,6 +300,7 @@ class TriggerManager:
     def get_state(self, trigger_id):
         """
         Get state of trigger by trigger id
+
         :param trigger_id: str trigger id
         :return: state of trigger
         """
@@ -304,6 +309,7 @@ class TriggerManager:
     def remove_metric(self, trigger_id, metric):
         """
         Remove metric by trigger id
+
         :param trigger_id: str trigger id
         :param metric: str metric name
         :return: True if removed, False otherwise
@@ -357,12 +363,12 @@ class TriggerManager:
     def create(
             self,
             name,
+            tags,
             targets,
+            warn_value,
+            error_value,
             desc='',
-            warn_value=None,
-            error_value=None,
-            tags=None,
-            ttl='600',
+            ttl=600,
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
@@ -371,26 +377,26 @@ class TriggerManager:
         """
         Creates new trigger. To save it call save() method of Trigger.
         :param name: str trigger name
-        :param targets: list of str targets
-        :param desc: str trigger description
-        :param warn_value: int warning value (if T1 <= warn_value)
-        :param error_value: int error value (if T1 <= error_value)
         :param tags: list of str tags for trigger
-        :param ttl: str set ttl_state if has no value for ttl seconds
+        :param targets: list of str targets
+        :param warn_value: float warning value (if T1 <= warn_value)
+        :param error_value: float error value (if T1 <= error_value)
+        :param desc: str trigger description
+        :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
-        :param expression: str python expression
+        :param expression: str c-like expression
         :param kwargs: additional trigger params
         :return: Trigger
         """
         return Trigger(
             self._client,
             name,
+            tags,
             targets,
-            desc,
             warn_value,
             error_value,
-            tags,
+            desc,
             ttl,
             ttl_state,
             sched,
@@ -399,4 +405,6 @@ class TriggerManager:
         )
 
     def _full_path(self, path=''):
-        return 'trigger/' + path
+        if path:
+            return 'trigger/' + path
+        return 'trigger'

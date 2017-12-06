@@ -8,7 +8,7 @@ from .subscription import Subscription
 from .trigger import TriggerManager
 
 
-TagStats = namedtuple('TagStats', ['data', 'name', 'subscriptions', 'triggers'])
+TagStats = namedtuple('TagStats', ['name', 'subscriptions', 'triggers'])
 
 
 class TagManager:
@@ -141,23 +141,7 @@ class TagManager:
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
 
-    def add_data(self, tag, data):
-        """
-        Add new data to tag.
-        Returns True if tag doesn't exist
-
-        :param tag: str tag name
-        :param data: dict of extra data
-        :return: True if ok, False otherwise
-        """
-        try:
-            self._client.put(self._full_path(tag + '/data'), json=data)
-            return False
-        except ResponseStructureError as e:
-            if e.content == b'':  # successfully in case of blank response
-                return True
-            else:
-                return False
-
     def _full_path(self, path=''):
-        return 'tag/' + path
+        if path:
+            return 'tag/' + path
+        return 'tag'

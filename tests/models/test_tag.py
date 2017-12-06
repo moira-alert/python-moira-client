@@ -22,7 +22,7 @@ class TagTest(ModelTest):
             tag_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('tag/')
+        get_mock.assert_called_with('tag')
 
     def test_fetch_all_bad_response(self):
         client = Client(self.api_url)
@@ -33,7 +33,7 @@ class TagTest(ModelTest):
                 tag_manager.fetch_all()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('tag/')
+        get_mock.assert_called_with('tag')
 
     def test_delete(self):
         client = Client(self.api_url)
@@ -64,15 +64,11 @@ class TagTest(ModelTest):
     def test_stats(self):
         client = Client(self.api_url)
         tag_manager = TagManager(client)
-        extra_data = {
-            'key': 'value'
-        }
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         return_value = {
             'list': [
                 {
-                    'data': extra_data,
                     'name': tag_name,
                     'subscriptions': [
                         {
@@ -103,39 +99,21 @@ class TagTest(ModelTest):
 
             self.assertTrue(get_mock.called)
             self.assertEqual(1, len(stats))
-            self.assertEqual(extra_data, stats[0].data)
             self.assertEqual(tag_name, stats[0].name)
             self.assertEqual(1, len(stats[0].subscriptions))
             self.assertEqual(subscription_id, stats[0].subscriptions[0].id)
 
-    def test_add_data(self):
-        client = Client(self.api_url)
-        tag_manager = TagManager(client)
-        tag_name = 'tag_name'
-        data = {
-            'key': 'value'
-        }
-
-        with patch.object(client, 'put', side_effect=ResponseStructureError('', b'')) as get_mock:
-            result = tag_manager.add_data(tag_name, data)
-
-            self.assertTrue(get_mock.called)
-            self.assertTrue(result)
 
     def test_fetch_assigned_triggers(self):
         client = Client(self.api_url)
         tag_manager = TagManager(client)
 
-        extra_data = {
-            'key': 'value'
-        }
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         trigger_id = '123'
-        return_value = {
+        stats = {
             'list': [
                 {
-                    'data': extra_data,
                     'name': tag_name,
                     'subscriptions': [
                         {
@@ -161,27 +139,37 @@ class TagTest(ModelTest):
             ]
         }
 
-        with patch.object(client, 'get', return_value=return_value) as get_mock:
+        state = {
+            'state': 'OK',
+            'trigger_id': trigger_id
+            }
+
+        trigger = {
+            'id': trigger_id,
+            'name': 'name',
+            'tags': ['tag'],
+            'targets': ['pattern'],
+            'warn_value': 0,
+            'error_value': 1
+            }
+
+        with patch.object(client, 'get', side_effect=[stats, state, trigger]) as get_mock:
             triggers = tag_manager.fetch_assigned_triggers(tag_name)
 
             self.assertTrue(get_mock.called)
-            get_mock.assert_called_with('trigger/')
+            get_mock.assert_called_with('trigger/123')
             self.assertEqual(1, len(triggers))
 
     def test_fetch_assigned_subscriptions(self):
         client = Client(self.api_url)
         tag_manager = TagManager(client)
 
-        extra_data = {
-            'key': 'value'
-        }
         tag_name = 'tag_name'
         subscription_id = '3c01399e-1d40-46dd-934f-318e8255fd3e'
         trigger_id = '123'
         return_value = {
             'list': [
                 {
-                    'data': extra_data,
                     'name': tag_name,
                     'subscriptions': [
                         {

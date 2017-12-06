@@ -251,4 +251,6 @@ class SubscriptionManager:
             return False
 
     def _full_path(self, path=''):
-        return 'subscription/' + path
+        if path:
+            return 'subscription/' + path
+        return 'subscription'
