@@ -41,8 +41,9 @@ trigger.save()
 print(trigger.id)
 ```
 
-> **Note:** id parameter is not required but recommended for large production solutions <br>
-> (e.q. fetch_by_id will work faster than is_exist). If parameter is not specified, random trigger guid will be generated.
+> **Note:** id parameter is not required but highly recommended for large production solutions <br>
+> (e.q. fetch_by_id will work faster than is_exist).
+> If parameter is not specified, random trigger guid will be generated.
 
 ### Update triggers
 Turn off all triggers for Monday.

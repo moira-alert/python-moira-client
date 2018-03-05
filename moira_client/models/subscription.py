@@ -39,7 +39,7 @@ class Subscription(Base):
             sched = default_sched
             self.disabled_days = set()
         else:
-            if 'days' in sched:
+            if 'days' in sched and sched['days'] is not None:
                 self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
         self.sched = sched
 
