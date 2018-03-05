@@ -1,3 +1,7 @@
+# 2.1.1
+- Allow passing warn_value and error_value for trigger as None when expression is used
+- Fixed case with subscription's schedule with no days selected
+
 # 2.0
 - Added custom headers support
 - Added trigger creation by custom id
