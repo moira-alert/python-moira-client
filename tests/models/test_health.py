@@ -19,7 +19,7 @@ class HealthTest(ModelTest):
             health_manager.get_notifier_state()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('/health/notifier/state')
+        get_mock.assert_called_with('/health/notifier')
 
     def test_get_notifier_state_bad_response(self):
         client = Client(self.api_url)
@@ -30,15 +30,14 @@ class HealthTest(ModelTest):
                 health_manager.get_notifier_state()
 
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('/health/notifier/state')
+        get_mock.assert_called_with('/health/notifier')
 
     def test_disable_notifier(self):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put', return_value={'state': 'ERROR'}) as put_mock:
-            with self.assertRaises(ResponseStructureError):
-                res = health_manager.disable_notifier()
+            res = health_manager.disable_notifier()
 
         data = {'state': 'ERROR'}
         
@@ -51,7 +50,8 @@ class HealthTest(ModelTest):
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put') as put_mock:
-            res = health_manager.disable_notifier()
+            with self.assertRaises(ResponseStructureError):
+                res = health_manager.disable_notifier()
 
         data = {'state': 'ERROR'}
         
@@ -64,8 +64,7 @@ class HealthTest(ModelTest):
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put', return_value={'state': 'OK'}) as put_mock:
-            with self.assertRaises(ResponseStructureError):
-                res = health_manager.disable_notifier()
+            res = health_manager.disable_notifier()
 
         data = {'state': 'OK'}
         
@@ -78,7 +77,8 @@ class HealthTest(ModelTest):
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put') as put_mock:
-            res = health_manager.disable_notifier()
+            with self.assertRaises(ResponseStructureError):
+                res = health_manager.disable_notifier()
 
         data = {'state': 'OK'}
         
