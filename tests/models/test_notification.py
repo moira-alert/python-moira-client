@@ -35,3 +35,25 @@ class NotificationTest(ModelTest):
 
         self.assertTrue(get_mock.called)
         get_mock.assert_called_with('notification', params=params)
+
+    def test_delete_all(self):
+        client = Client(self.api_url)
+        notification_manager = NotificationManager(client)
+
+        with patch.object(client, 'delete', new=Mock(side_effect=InvalidJSONError(b''))) as delete_mock:
+            res = notification_manager.delete_all()
+
+        self.assertTrue(delete_mock.called)
+        self.assertTrue(res)
+        delete_mock.assert_called_with('notification/all')
+
+    def test_delete_all_fail(self):
+        client = Client(self.api_url)
+        notification_manager = NotificationManager(client)
+
+        with patch.object(client, 'delete') as delete_mock:
+            res = notification_manager.delete_all()
+
+        self.assertTrue(delete_mock.called)
+        self.assertFalse(res)
+        delete_mock.assert_called_with('subscription/all')
