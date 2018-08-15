@@ -63,7 +63,7 @@ class Subscription(Base):
             'throttling': self.throttling,
             'sched': self.sched,
             'ignore_warnings': self.ignore_warnings,
-            'ignore_recoverings': self.ignore_warnings
+            'ignore_recoverings': self.ignore_recoverings
         }
 
         if subscription_id:
