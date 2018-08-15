@@ -30,7 +30,7 @@ class NotificationManager:
         :return: True on success, False otherwise
         """
         try:
-            result = self._client.delete(self._full_path("/all"))
+            result = self._client.delete(self._full_path("all"))
             return False
         except InvalidJSONError as e:
             if e.content == b'':  # successfully if response is blank

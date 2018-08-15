@@ -1,6 +1,8 @@
 try:
+    from unittest.mock import Mock
     from unittest.mock import patch
-except:
+except ImportError:
+    from mock import Mock
     from mock import patch
 
 from moira_client.client import Client

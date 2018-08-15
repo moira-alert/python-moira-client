@@ -68,7 +68,7 @@ class SubscriptionTest(ModelTest):
         subscription_id = '1'
 
         with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as test_mock:
-            res = subscription_manager.test()
+            res = subscription_manager.test(subscription_id)
 
         self.assertTrue(test_mock.called)
         self.assertTrue(res)
@@ -81,7 +81,7 @@ class SubscriptionTest(ModelTest):
         subscription_id = '1'
 
         with patch.object(client, 'put') as test_mock:
-            res = subscription_manager.test()
+            res = subscription_manager.test(subscription_id)
 
         self.assertTrue(test_mock.called)
         self.assertFalse(res)
