@@ -1,0 +1,87 @@
+try:
+    from unittest.mock import Mock
+    from unittest.mock import patch
+except ImportError:
+    from mock import Mock
+    from mock import patch
+
+from moira_client.client import Client
+from moira_client.client import ResponseStructureError
+from moira_client.models.health import HealthManager
+from .test_model import ModelTest
+
+
+class HealthTest(ModelTest):
+
+    def test_get_notifier_state(self):
+        client = Client(self.api_url)
+        health_manager = HealthManager(client)
+
+        with patch.object(client, 'get', return_value={'state': 'OK'}) as get_mock:
+            health_manager.get_notifier_state()
+
+        self.assertTrue(get_mock.called)
+        get_mock.assert_called_with('/health/notifier/state')
+
+    def test_fetch_all_bad_response(self):
+        client = Client(self.api_url)
+        health_manager = HealthManager(client)
+
+        with patch.object(client, 'get', return_value={}) as get_mock:
+            with self.assertRaises(ResponseStructureError):
+                health_manager.get_notifier_state()
+
+        self.assertTrue(get_mock.called)
+        get_mock.assert_called_with('/health/notifier/state')
+
+    def test_disable_notifier(self):
+        client = Client(self.api_url)
+        health_manager = HealthManager(client)
+
+        with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as put_mock:
+            res = health_manager.disable_notifier()
+
+        data = {'state': 'ERROR'}
+        
+        self.assertTrue(put_mock.called)
+        self.assertTrue(res)
+        delete_mock.assert_called_with('/health/notifier/state', json=data)
+
+    def test_disable_notifier_bad_response(self):
+        client = Client(self.api_url)
+        health_manager = HealthManager(client)
+
+        with patch.object(client, 'put') as put_mock:
+            res = health_manager.disable_notifier()
+
+        data = {'state': 'ERROR'}
+        
+        self.assertTrue(put_mock.called)
+        self.assertFalse(res)
+        delete_mock.assert_called_with('/health/notifier/state', json=data)
+
+    def test_enable_notifier(self):
+        client = Client(self.api_url)
+        health_manager = HealthManager(client)
+
+        with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as put_mock:
+            res = health_manager.disable_notifier()
+
+        data = {'state': 'OK'}
+        
+        self.assertTrue(put_mock.called)
+        self.assertTrue(res)
+        delete_mock.assert_called_with('/health/notifier/state', json=data)
+
+    def test_enable_notifier_bad_response(self):
+        client = Client(self.api_url)
+        health_manager = HealthManager(client)
+
+        with patch.object(client, 'put') as put_mock:
+            res = health_manager.disable_notifier()
+
+        data = {'state': 'OK'}
+        
+        self.assertTrue(put_mock.called)
+        self.assertFalse(res)
+        delete_mock.assert_called_with('/health/notifier/state', json=data)

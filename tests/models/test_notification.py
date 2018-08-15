@@ -50,7 +50,7 @@ class NotificationTest(ModelTest):
         self.assertTrue(res)
         delete_mock.assert_called_with('notification/all')
 
-    def test_delete_all_fail(self):
+    def test_delete_all_bad_response(self):
         client = Client(self.api_url)
         notification_manager = NotificationManager(client)
 

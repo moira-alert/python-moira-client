@@ -67,12 +67,12 @@ class SubscriptionTest(ModelTest):
 
         subscription_id = '1'
 
-        with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as test_mock:
+        with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as put_mock:
             res = subscription_manager.test(subscription_id)
 
-        self.assertTrue(test_mock.called)
+        self.assertTrue(put_mock.called)
         self.assertTrue(res)
-        test_mock.assert_called_with('subscription/' + subscription_id + '/test')
+        put_mock.assert_called_with('subscription/' + subscription_id + '/test')
 
     def test_test_fail(self):
         client = Client(self.api_url)
@@ -80,9 +80,9 @@ class SubscriptionTest(ModelTest):
 
         subscription_id = '1'
 
-        with patch.object(client, 'put') as test_mock:
+        with patch.object(client, 'put') as put_mock:
             res = subscription_manager.test(subscription_id)
 
-        self.assertTrue(test_mock.called)
+        self.assertTrue(put_mock.called)
         self.assertFalse(res)
-        test_mock.assert_called_with('subscription/' + subscription_id + '/test')
+        put_mock.assert_called_with('subscription/' + subscription_id + '/test')
