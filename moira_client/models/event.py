@@ -30,6 +30,16 @@ class EventManager:
 
         return result['list']
 
+    def delete_all(self):
+        """
+        Removes all events.
+        :return: bool
+        :raises: ValueError
+        :raises: ResponseStructureError
+        """
+        result = self._client.delete(self._full_path("/all"))
+        return result
+
     def _full_path(self, path=''):
         if path:
             return 'event/' + path

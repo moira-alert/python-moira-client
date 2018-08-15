@@ -8,7 +8,8 @@ MINUTES_IN_HOUR = 60
 
 
 class Subscription(Base):
-    def __init__(self, client, contacts=None, tags=None, enabled=None, throttling=None, sched=None, **kwargs):
+    def __init__(self, client, contacts=None, tags=None, enabled=None, throttling=None, sched=None,
+                 ignore_warnings=False, ignore_recoverings=False, **kwargs):
         """
         
         :param client: api client
@@ -17,6 +18,8 @@ class Subscription(Base):
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
+        :param ignore_warnings: bool ignore warnings
+        :param ignore_recoverings: bool ignore recoverings
         :param kwargs: additional parameters
         """
         self._client = client
@@ -49,13 +52,18 @@ class Subscription(Base):
         self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
 
+        self.ignore_warnings = ignore_warnings
+        self.ignore_recoverings = ignore_recoverings
+
     def _send_request(self, subscription_id=None):
         data = {
             'contacts': self.contacts,
             'tags': self.tags,
             'enabled': self.enabled,
             'throttling': self.throttling,
-            'sched': self.sched
+            'sched': self.sched,
+            'ignore_warnings': self.ignore_warnings,
+            'ignore_recoverings': self.ignore_warnings
         }
 
         if subscription_id:
@@ -134,6 +142,15 @@ class Subscription(Base):
         if not self._id:
             return self.save()
         self._send_request(self._id)
+
+    def test(self):
+        """
+        Test subscription
+
+        :return: None
+        """
+        if self._id:
+            self.client.put(self._full_path(self._id) + "/test")
 
     def set_start_hour(self, hour):
         """
@@ -219,7 +236,8 @@ class SubscriptionManager:
                 return True
         return False
 
-    def create(self, contacts=None, tags=None, enabled=True, throttling=True, sched=None, **kwargs):
+    def create(self, contacts=None, tags=None, enabled=True, throttling=True, sched=None,
+               ignore_warnings=False, ignore_recoverings=False, **kwargs):
         """
         Create new subscription.
         
@@ -228,6 +246,8 @@ class SubscriptionManager:
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
+        :param ignore_warnings: bool ignore warnings
+        :param ignore_recoverings: bool ignore recoverings
         :param kwargs: additional parameters
         :return: Subscription
         """
@@ -238,6 +258,8 @@ class SubscriptionManager:
             enabled,
             throttling,
             sched,
+            ignore_warnings,
+            ignore_recoverings,
             **kwargs
         )
 

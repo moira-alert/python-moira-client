@@ -28,6 +28,7 @@ class Trigger(Base):
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
+            remote=False,
             **kwargs):
         """
 
@@ -42,6 +43,7 @@ class Trigger(Base):
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
         :param expression: str c-like expression
+        :param remote: bool trigger type
         :param kwargs: additional parameters
         """
         self._client = client
@@ -75,6 +77,8 @@ class Trigger(Base):
         self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
         self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
+
+        self.remote = remote
 
     def add_target(self, target):
         """
@@ -127,7 +131,8 @@ class Trigger(Base):
             'ttl': self.ttl,
             'ttl_state': self.ttl_state,
             'sched': self.sched,
-            'expression': self.expression
+            'expression': self.expression,
+            'is_remote': self.remote
         }
 
         if trigger_id:
@@ -372,6 +377,7 @@ class TriggerManager:
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
+            remote=False,
             **kwargs
     ):
         """
@@ -386,6 +392,7 @@ class TriggerManager:
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
         :param expression: str c-like expression
+        :param remote: bool trigger type
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -401,6 +408,7 @@ class TriggerManager:
             ttl_state,
             sched,
             expression,
+            remote,
             **kwargs
         )
 
