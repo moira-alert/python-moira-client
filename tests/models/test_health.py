@@ -21,7 +21,7 @@ class HealthTest(ModelTest):
         self.assertTrue(get_mock.called)
         get_mock.assert_called_with('/health/notifier/state')
 
-    def test_fetch_all_bad_response(self):
+    def test_get_notifier_state_bad_response(self):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
@@ -44,7 +44,7 @@ class HealthTest(ModelTest):
         
         self.assertTrue(put_mock.called)
         self.assertTrue(res)
-        delete_mock.assert_called_with('/health/notifier/state', json=data)
+        delete_mock.assert_called_with('/health/notifier', json=data)
 
     def test_disable_notifier_bad_response(self):
         client = Client(self.api_url)
@@ -57,7 +57,7 @@ class HealthTest(ModelTest):
         
         self.assertTrue(put_mock.called)
         self.assertFalse(res)
-        delete_mock.assert_called_with('/health/notifier/state', json=data)
+        delete_mock.assert_called_with('/health/notifier', json=data)
 
     def test_enable_notifier(self):
         client = Client(self.api_url)
@@ -71,7 +71,7 @@ class HealthTest(ModelTest):
         
         self.assertTrue(put_mock.called)
         self.assertTrue(res)
-        delete_mock.assert_called_with('/health/notifier/state', json=data)
+        delete_mock.assert_called_with('/health/notifier', json=data)
 
     def test_enable_notifier_bad_response(self):
         client = Client(self.api_url)
@@ -84,4 +84,4 @@ class HealthTest(ModelTest):
         
         self.assertTrue(put_mock.called)
         self.assertFalse(res)
-        delete_mock.assert_called_with('/health/notifier/state', json=data)
+        delete_mock.assert_called_with('/health/notifier', json=data)
