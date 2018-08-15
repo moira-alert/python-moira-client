@@ -1,6 +1,10 @@
 from ..client import ResponseStructureError
 
 
+STATE_ENABLED = 'OK'
+STATE_DISABLED = 'ERROR'
+
+
 class HealthManager:
     def __init__(self, client):
         self._client = client
@@ -27,7 +31,7 @@ class HealthManager:
         :raises: ResponseStructureError
         """
         data = {
-            'state': "ERROR"
+            'state': STATE_DISABLED
         }
         result = self._client.put(self._full_path("notifier"), json=data)
         if 'state' not in result:
@@ -44,7 +48,7 @@ class HealthManager:
         :raises: ResponseStructureError
         """
         data = {
-            'state': "OK"
+            'state': STATE_ENABLED
         }
         result = self._client.put(self._full_path("notifier"), json=data)
         if 'state' not in result:
