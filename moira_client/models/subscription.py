@@ -143,15 +143,6 @@ class Subscription(Base):
             return self.save()
         self._send_request(self._id)
 
-    def test(self):
-        """
-        Test subscription
-
-        :return: None
-        """
-        if self._id:
-            self.client.put(self._full_path(self._id) + "/test")
-
     def set_start_hour(self, hour):
         """
         Set start hour
@@ -266,6 +257,15 @@ class SubscriptionManager:
     def delete(self, subscription_id):
         try:
             self._client.delete(self._full_path(subscription_id))
+            return False
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            return False
+
+    def test(self, subscription_id):
+        try:
+            self._client.put(self._full_path(subscription_id) + "/test")
             return False
         except InvalidJSONError as e:
             if e.content == b'':  # successfully if response is blank

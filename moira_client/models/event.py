@@ -1,3 +1,4 @@
+from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 
 
@@ -31,14 +32,13 @@ class EventManager:
         return result['list']
 
     def delete_all(self):
-        """
-        Removes all events.
-        :return: bool
-        :raises: ValueError
-        :raises: ResponseStructureError
-        """
-        result = self._client.delete(self._full_path("/all"))
-        return result
+        try:
+            result = self._client.delete(self._full_path("/all"))
+            return False
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            return False
 
     def _full_path(self, path=''):
         if path:
