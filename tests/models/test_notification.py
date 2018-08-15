@@ -6,6 +6,7 @@ except ImportError:
     from mock import patch
 
 from moira_client.client import Client
+from moira_client.client import InvalidJSONError
 from moira_client.client import ResponseStructureError
 from moira_client.models.notification import NotificationManager
 from .test_model import ModelTest
@@ -58,4 +59,4 @@ class NotificationTest(ModelTest):
 
         self.assertTrue(delete_mock.called)
         self.assertFalse(res)
-        delete_mock.assert_called_with('subscription/all')
+        delete_mock.assert_called_with('notification/all')
