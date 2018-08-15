@@ -63,7 +63,7 @@ class HealthTest(ModelTest):
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put', return_value={'state': 'OK'}) as put_mock:
-            res = health_manager.disable_notifier()
+            res = health_manager.enable_notifier()
 
         data = {'state': 'OK'}
         
@@ -77,7 +77,7 @@ class HealthTest(ModelTest):
 
         with patch.object(client, 'put') as put_mock:
             with self.assertRaises(ResponseStructureError):
-                health_manager.disable_notifier()
+                health_manager.enable_notifier()
 
         data = {'state': 'OK'}
         
