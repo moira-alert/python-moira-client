@@ -255,6 +255,11 @@ class SubscriptionManager:
         )
 
     def delete(self, subscription_id):
+        """
+        Remove subscription by given id
+
+        :return: True on success, False otherwise
+        """
         try:
             self._client.delete(self._full_path(subscription_id))
             return False
@@ -264,6 +269,11 @@ class SubscriptionManager:
             return False
 
     def test(self, subscription_id):
+        """
+        Send test notification to subscription contact
+
+        :return: True on success, False otherwise
+        """
         try:
             self._client.put(self._full_path(subscription_id) + "/test")
             return False

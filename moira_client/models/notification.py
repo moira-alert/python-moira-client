@@ -24,6 +24,11 @@ class NotificationManager:
         return result['list']
 
     def delete_all(self):
+        """
+        Remove all notifications
+
+        :return: True on success, False otherwise
+        """
         try:
             result = self._client.delete(self._full_path("/all"))
             return False

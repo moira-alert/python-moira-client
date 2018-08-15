@@ -20,7 +20,7 @@ class HealthManager:
 
     def disable_notifier(self):
         """
-        Manages Moira Notifier to stop sending notifications
+        Manage Moira Notifier to stop sending notifications
         Returns current Moira Notifier state
         :return: str
 
@@ -37,7 +37,7 @@ class HealthManager:
 
     def enable_notifier(self):
         """
-        Manages Moira Notifier to start sending notifications
+        Manage Moira Notifier to start sending notifications
         Returns current Moira Notifier state
         :return: str
 

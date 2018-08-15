@@ -11,7 +11,7 @@ class EventManager:
 
     def fetch_by_trigger(self, trigger, limit=MAX_FETCH_LIMIT):
         """
-        Get all events by trigger.
+        Get all events by trigger
         :param trigger: Trigger trigger
         :param limit: int limit
         :return: list of dicts
@@ -32,6 +32,11 @@ class EventManager:
         return result['list']
 
     def delete_all(self):
+        """
+        Remove all events
+
+        :return: True on success, False otherwise
+        """
         try:
             result = self._client.delete(self._full_path("/all"))
             return False
