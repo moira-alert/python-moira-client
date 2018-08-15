@@ -1,8 +1,6 @@
 try:
-    from unittest.mock import Mock
     from unittest.mock import patch
 except ImportError:
-    from mock import Mock
     from mock import patch
 
 from moira_client.client import Client
@@ -38,8 +36,9 @@ class HealthTest(ModelTest):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
-        with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as put_mock:
-            res = health_manager.disable_notifier()
+        with patch.object(client, 'put', return_value={'state': 'ERROR'}) as put_mock:
+            with self.assertRaises(ResponseStructureError):
+                res = health_manager.disable_notifier()
 
         data = {'state': 'ERROR'}
         
@@ -64,8 +63,9 @@ class HealthTest(ModelTest):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
-        with patch.object(client, 'put', new=Mock(side_effect=InvalidJSONError(b''))) as put_mock:
-            res = health_manager.disable_notifier()
+        with patch.object(client, 'put', return_value={'state': 'OK'}) as put_mock:
+            with self.assertRaises(ResponseStructureError):
+                res = health_manager.disable_notifier()
 
         data = {'state': 'OK'}
         
