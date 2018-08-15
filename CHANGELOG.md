@@ -1,3 +1,18 @@
+# 2.3
+
+- Added health methods (get_notifier_state, disable_notifier, enable_notifier) to prevent
+  mass spam mailings in cases when Graphite metrics receivers are degraded
+- Added event.delete_all() and notification.delete_all() to remove unexpectedly generated
+  trigger events and notifications in cases when Graphite metrics receivers are degraded
+- Added subscription.test() to trigger test notifications
+- Added boolean attributes to subscription (ignore_warnings, ignore_recoverings).
+  Corresponding tags "ERROR", "DEGRADATION" and "HIGH DEGRADATION" are deprecated
+- Added boolean "is_remote" attribute to trigger to provide ability to use external Graphite storage
+  instead of Redis
+- Added string "trigger_type" attribute to trigger. Options are: rising, falling, expression
+  Single thresholds (only warn_value or only error_value) may be used if "trigger_type" value
+  is defined.
+
 # 2.1.1
 - Allow passing warn_value and error_value for trigger as None when expression is used
 - Fixed case with subscription's schedule with no days selected
