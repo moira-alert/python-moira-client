@@ -4,7 +4,7 @@
   mass spam mailings in cases when Graphite metrics receivers are degraded
 - Added event.delete_all() and notification.delete_all() to remove unexpectedly generated<br/>
   trigger events and notifications in cases when Graphite metrics receivers are degraded
-- Added subscription.test(subscription_id) to trigger test notifications
+- Added subscription.test(subscription_id) to trigger test notification
 - Added boolean attributes to subscription (ignore_warnings, ignore_recoverings).<br/>
   Corresponding tags "ERROR", "DEGRADATION" and "HIGH DEGRADATION" are deprecated
 - Added boolean "is_remote" attribute to trigger to provide ability to use external Graphite storage<br/>
