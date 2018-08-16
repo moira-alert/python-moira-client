@@ -33,7 +33,7 @@ class Trigger(Base):
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
-            trigger_type=False,
+            trigger_type=None,
             remote=False,
             **kwargs):
         """
@@ -401,7 +401,7 @@ class TriggerManager:
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
-            trigger_type=False,
+            trigger_type=None,
             remote=False,
             **kwargs
     ):
