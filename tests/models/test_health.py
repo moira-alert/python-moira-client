@@ -32,12 +32,12 @@ class HealthTest(ModelTest):
         self.assertTrue(get_mock.called)
         get_mock.assert_called_with('health/notifier')
 
-    def test_disable_notifier(self):
+    def test_disable_notifications(self):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put', return_value={'state': 'ERROR'}) as put_mock:
-            res = health_manager.disable_notifier()
+            res = health_manager.disable_notifications()
 
         data = {'state': 'ERROR'}
         
@@ -45,25 +45,25 @@ class HealthTest(ModelTest):
         self.assertTrue(res)
         put_mock.assert_called_with('health/notifier', json=data)
 
-    def test_disable_notifier_bad_response(self):
+    def test_disable_notifications_bad_response(self):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put') as put_mock:
             with self.assertRaises(ResponseStructureError):
-                health_manager.disable_notifier()
+                health_manager.disable_notifications()
 
         data = {'state': 'ERROR'}
         
         self.assertTrue(put_mock.called)
         put_mock.assert_called_with('health/notifier', json=data)
 
-    def test_enable_notifier(self):
+    def test_enable_notifications(self):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put', return_value={'state': 'OK'}) as put_mock:
-            res = health_manager.enable_notifier()
+            res = health_manager.enable_notifications()
 
         data = {'state': 'OK'}
         
@@ -71,13 +71,13 @@ class HealthTest(ModelTest):
         self.assertTrue(res)
         put_mock.assert_called_with('health/notifier', json=data)
 
-    def test_enable_notifier_bad_response(self):
+    def test_enable_notifications_bad_response(self):
         client = Client(self.api_url)
         health_manager = HealthManager(client)
 
         with patch.object(client, 'put') as put_mock:
             with self.assertRaises(ResponseStructureError):
-                health_manager.enable_notifier()
+                health_manager.enable_notifications()
 
         data = {'state': 'OK'}
         
