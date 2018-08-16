@@ -1,6 +1,6 @@
 # 2.3
 
-- Added health methods (get_notifier_state, disable_notifier, enable_notifier) to prevent<br/>
+- Added health methods (get_notifier_state, disable_notifications, enable_notifications) to prevent<br/>
   mass spam mailings in cases when Graphite metrics receivers are degraded
 - Added event.delete_all() and notification.delete_all() to remove unexpectedly generated<br/>
   trigger events and notifications in cases when Graphite metrics receivers are degraded
