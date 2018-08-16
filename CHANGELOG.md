@@ -1,3 +1,19 @@
+# 2.3
+
+- Added health methods (get_notifier_state, disable_notifications, enable_notifications) to potect<br/>
+  end user from false NODATA notifications. <br/>
+  See more details: https://moira.readthedocs.io/en/latest/user_guide/selfstate.html
+- Added event.delete_all() and notification.delete_all() to remove unexpectedly generated<br/>
+  trigger events and notifications in cases when Moira Notifier is managed to stop sending notifications.
+- Added subscription.test(subscription_id) to trigger test notification
+- Added boolean attributes to subscription (ignore_warnings, ignore_recoverings).<br/>
+  Corresponding tags "ERROR", "DEGRADATION" and "HIGH DEGRADATION" are deprecated
+- Added boolean "is_remote" attribute to trigger to provide ability to use external Graphite storage<br/>
+  instead of Redis
+- Added string "trigger_type" attribute to trigger. Options are: rising, falling, expression<br/>
+  Single thresholds (only warn_value or only error_value) may be used if "trigger_type" value<br/>
+  is defined.
+
 # 2.1.1
 - Allow passing warn_value and error_value for trigger as None when expression is used
 - Fixed case with subscription's schedule with no days selected

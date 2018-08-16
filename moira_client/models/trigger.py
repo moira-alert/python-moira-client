@@ -4,6 +4,7 @@ from .base import Base
 
 
 DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
 STATE_OK = 'OK'
 STATE_WARN = 'WARN'
 STATE_ERROR = 'ERROR'
@@ -11,6 +12,10 @@ STATE_NODATA = 'NODATA'
 STATE_EXCEPTION = 'EXCEPTION'
 
 MINUTES_IN_HOUR = 60
+
+RISING_TRIGGER = 'rising'
+FALLING_TRIGGER = 'falling'
+EXPRESSION_TRIGGER = 'expression'
 
 
 class Trigger(Base):
@@ -28,6 +33,8 @@ class Trigger(Base):
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
+            trigger_type=False,
+            remote=False,
             **kwargs):
         """
 
@@ -42,6 +49,8 @@ class Trigger(Base):
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
         :param expression: str c-like expression
+        :param trigger_type: str trigger type
+        :param remote: bool use remote storage
         :param kwargs: additional parameters
         """
         self._client = client
@@ -69,12 +78,30 @@ class Trigger(Base):
                 self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
         self.sched = sched
         self.expression = expression
+        self.trigger_type = self.resolve_type(trigger_type)
 
         # compute time range
         self._start_hour = self.sched['startOffset'] // MINUTES_IN_HOUR
         self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
         self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
+
+        self.remote = remote
+
+    def resolve_type(self, trigger_type):
+        """
+        Resolve type of a trigger
+        :return: str
+        """
+        if trigger_type in (RISING_TRIGGER, FALLING_TRIGGER, EXPRESSION_TRIGGER):
+            return trigger_type
+        if self.expression != '':
+            return EXPRESSION_TRIGGER
+        if self.warn_value is not None and self.error_value is not None:
+            if self.warn_value > self.error_value:
+                return FALLING_TRIGGER
+            if self.warn_value < self.error_value:
+                return RISING_TRIGGER
 
     def add_target(self, target):
         """
@@ -127,7 +154,9 @@ class Trigger(Base):
             'ttl': self.ttl,
             'ttl_state': self.ttl_state,
             'sched': self.sched,
-            'expression': self.expression
+            'expression': self.expression,
+            'is_remote': self.remote,
+            'trigger_type': self.trigger_type
         }
 
         if trigger_id:
@@ -372,6 +401,8 @@ class TriggerManager:
             ttl_state=STATE_NODATA,
             sched=None,
             expression='',
+            trigger_type=False,
+            remote=False,
             **kwargs
     ):
         """
@@ -386,6 +417,8 @@ class TriggerManager:
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
         :param sched: dict schedule for trigger
         :param expression: str c-like expression
+        :param trigger_type: str trigger type
+        :param remote: bool use remote storage
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -401,6 +434,8 @@ class TriggerManager:
             ttl_state,
             sched,
             expression,
+            trigger_type,
+            remote,
             **kwargs
         )
 

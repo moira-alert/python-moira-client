@@ -1,3 +1,4 @@
+from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 
 
@@ -21,6 +22,20 @@ class NotificationManager:
             raise ResponseStructureError("list doesn't exist in response", result)
 
         return result['list']
+
+    def delete_all(self):
+        """
+        Remove all notifications
+
+        :return: True on success, False otherwise
+        """
+        try:
+            result = self._client.delete(self._full_path("all"))
+            return False
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            return False
 
     def _full_path(self, path=''):
         if path:
