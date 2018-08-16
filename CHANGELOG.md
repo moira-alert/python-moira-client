@@ -1,9 +1,10 @@
 # 2.3
 
-- Added health methods (get_notifier_state, disable_notifications, enable_notifications) to prevent<br/>
-  mass spam mailings in cases when Graphite metrics receivers are degraded
+- Added health methods (get_notifier_state, disable_notifications, enable_notifications) to potect<br/>
+  end user from false NODATA notifications. <br/>
+  See more details: https://moira.readthedocs.io/en/latest/user_guide/selfstate.html
 - Added event.delete_all() and notification.delete_all() to remove unexpectedly generated<br/>
-  trigger events and notifications in cases when Graphite metrics receivers are degraded
+  trigger events and notifications.
 - Added subscription.test(subscription_id) to trigger test notification
 - Added boolean attributes to subscription (ignore_warnings, ignore_recoverings).<br/>
   Corresponding tags "ERROR", "DEGRADATION" and "HIGH DEGRADATION" are deprecated
