@@ -34,7 +34,7 @@ class Trigger(Base):
             sched=None,
             expression='',
             trigger_type=None,
-            remote=False,
+            is_remote=False,
             **kwargs):
         """
 
@@ -50,7 +50,7 @@ class Trigger(Base):
         :param sched: dict schedule for trigger
         :param expression: str c-like expression
         :param trigger_type: str trigger type
-        :param remote: bool use remote storage
+        :param is_remote: bool use remote storage
         :param kwargs: additional parameters
         """
         self._client = client
@@ -86,7 +86,7 @@ class Trigger(Base):
         self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
 
-        self.remote = remote
+        self.is_remote = is_remote
 
     def resolve_type(self, trigger_type):
         """
@@ -155,7 +155,7 @@ class Trigger(Base):
             'ttl_state': self.ttl_state,
             'sched': self.sched,
             'expression': self.expression,
-            'is_remote': self.remote,
+            'is_remote': self.is_remote,
             'trigger_type': self.trigger_type
         }
 
@@ -402,7 +402,7 @@ class TriggerManager:
             sched=None,
             expression='',
             trigger_type=None,
-            remote=False,
+            is_remote=False,
             **kwargs
     ):
         """
@@ -418,7 +418,7 @@ class TriggerManager:
         :param sched: dict schedule for trigger
         :param expression: str c-like expression
         :param trigger_type: str trigger type
-        :param remote: bool use remote storage
+        :param is_remote: bool use remote storage
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -435,7 +435,7 @@ class TriggerManager:
             sched,
             expression,
             trigger_type,
-            remote,
+            is_remote,
             **kwargs
         )
 
