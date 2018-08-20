@@ -1,4 +1,4 @@
-# 2.3.3
+# 2.3.4
 
 - Added health methods (get_notifier_state, disable_notifications, enable_notifications) to potect<br/>
   end user from false NODATA notifications. <br/>
