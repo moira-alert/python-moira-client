@@ -1,3 +1,6 @@
+# 2.3.5
+- Fixed url to update existing subscription
+
 # 2.3.4
 
 - Added health methods (get_notifier_state, disable_notifications, enable_notifications) to potect<br/>
