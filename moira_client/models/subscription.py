@@ -80,7 +80,10 @@ class Subscription(Base):
         data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
         data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
 
-        result = self._client.put('subscription', json=data)
+        if subscription_id:
+            result = self._client.put('subscription/' + subscription_id, json=data)
+        else:
+            result = self._client.put('subscription', json=data)
         if 'id' not in result:
             raise ResponseStructureError("id doesn't exist in response", result)
 
