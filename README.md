@@ -2,6 +2,8 @@
 
 # Moira Client
 
+If you're new here, better check out our main [README](https://github.com/moira-alert/moira/blob/master/README.md).
+
 Python client for Moira.
 
 # Installation
