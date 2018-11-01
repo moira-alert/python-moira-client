@@ -68,7 +68,7 @@ class Trigger(Base):
         default_sched = {
             'startOffset': 0,
             'endOffset': 1439,
-            'tzOffset': -180
+            'tzOffset': 0
         }
         if not sched:
             sched = default_sched

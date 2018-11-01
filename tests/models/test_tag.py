@@ -86,7 +86,7 @@ class TagTest(ModelTest):
                             ],
                             'endOffset': 1439,
                             'startOffset': 0,
-                            'tzOffset': -180
+                            'tzOffset': 0
                         }
                     ],
                     'triggers': []
@@ -131,7 +131,7 @@ class TagTest(ModelTest):
                             ],
                             'endOffset': 1439,
                             'startOffset': 0,
-                            'tzOffset': -180
+                            'tzOffset': 0
                         }
                     ],
                     'triggers': [trigger_id]
@@ -187,7 +187,7 @@ class TagTest(ModelTest):
                             ],
                             'endOffset': 1439,
                             'startOffset': 0,
-                            'tzOffset': -180
+                            'tzOffset': 0
                         }
                     ],
                     'triggers': [trigger_id]

@@ -1,3 +1,8 @@
+# 2.4
+
+- Python Moira client is now MIT licensed
+- Changed default timezone offset to UTC
+
 # 2.3.5
 - Fixed url to update existing subscription
 
