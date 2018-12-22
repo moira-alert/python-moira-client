@@ -5,7 +5,6 @@ from requests.exceptions import HTTPError
 from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 from .subscription import Subscription
-from .trigger import TriggerManager
 
 
 TagStats = namedtuple('TagStats', ['name', 'subscriptions', 'triggers'])
@@ -55,7 +54,6 @@ class TagManager:
         """
         result = self._client.get(self._full_path('stats'))
         if 'list' in result:
-            trigger_manager = TriggerManager(self._client)
             for stat in result['list']:
                 if 'subscriptions' in stat:
                     stat['subscriptions'] = [
@@ -76,7 +74,6 @@ class TagManager:
         """
         result = self._client.get(self._full_path('stats'))
         if 'list' in result:
-            trigger_manager = TriggerManager(self._client)
             trigger_ids = set()
             for stat in result['list']:
                 if 'triggers' in stat and 'name' in stat:
@@ -101,7 +98,6 @@ class TagManager:
         tags = set(tags)
         result = self._client.get(self._full_path('stats'))
         if 'list' in result:
-            trigger_manager = TriggerManager(self._client)
             trigger_ids = set()
             for stat in result['list']:
                 if 'triggers' in stat and 'name' in stat:
