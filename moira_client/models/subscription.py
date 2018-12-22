@@ -14,7 +14,7 @@ class Subscription(Base):
         
         :param client: api client
         :param tags: list of str tags
-        :param contacts: list of contact id
+        :param contacts: list of contact id's
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
@@ -263,7 +263,7 @@ class SubscriptionManager:
         Create new subscription.
         
         :param tags: list of str tags
-        :param contacts: list of contact id
+        :param contacts: list of contact id's
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
