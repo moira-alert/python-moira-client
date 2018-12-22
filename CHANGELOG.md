@@ -2,6 +2,8 @@
 
 - Python Moira client is now MIT licensed
 - Changed default timezone offset to UTC
+- Added dictionary attribute with plotting settings to subscription
+- Added boolean attribute mute_new_metrics to trigger
 
 # 2.3.5
 - Fixed url to update existing subscription

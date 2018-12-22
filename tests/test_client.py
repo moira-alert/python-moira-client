@@ -9,7 +9,11 @@ from moira_client.client import Client
 from moira_client.client import InvalidJSONError
 
 TEST_API_URL = 'http://test/api/url'
-AUTH_HEADERS = {'X-Webauth-User': 'login'}
+AUTH_HEADERS = {
+    'X-Webauth-User': 'login',
+    'Content-Type': 'application/json',
+    'User-Agent': 'Python Moira Client'
+    }
 
 
 class FakeResponse:

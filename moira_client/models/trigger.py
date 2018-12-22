@@ -35,6 +35,7 @@ class Trigger(Base):
             expression='',
             trigger_type=None,
             is_remote=False,
+            mute_new_metrics=False,
             **kwargs):
         """
 
@@ -51,6 +52,7 @@ class Trigger(Base):
         :param expression: str c-like expression
         :param trigger_type: str trigger type
         :param is_remote: bool use remote storage
+        :param mute_new_metrics: bool mute new metrics
         :param kwargs: additional parameters
         """
         self._client = client
@@ -87,6 +89,7 @@ class Trigger(Base):
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
 
         self.is_remote = is_remote
+        self.mute_new_metrics = mute_new_metrics
 
     def resolve_type(self, trigger_type):
         """
@@ -156,7 +159,8 @@ class Trigger(Base):
             'sched': self.sched,
             'expression': self.expression,
             'is_remote': self.is_remote,
-            'trigger_type': self.trigger_type
+            'trigger_type': self.trigger_type,
+            'mute_new_metrics': self.mute_new_metrics
         }
 
         if trigger_id:
@@ -403,6 +407,7 @@ class TriggerManager:
             expression='',
             trigger_type=None,
             is_remote=False,
+            mute_new_metrics=False,
             **kwargs
     ):
         """
@@ -419,6 +424,7 @@ class TriggerManager:
         :param expression: str c-like expression
         :param trigger_type: str trigger type
         :param is_remote: bool use remote storage
+        :param mute_new_metrics: bool mute new metrics
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -436,6 +442,7 @@ class TriggerManager:
             expression,
             trigger_type,
             is_remote,
+            mute_new_metrics,
             **kwargs
         )
 

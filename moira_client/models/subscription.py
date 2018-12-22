@@ -9,7 +9,7 @@ MINUTES_IN_HOUR = 60
 
 class Subscription(Base):
     def __init__(self, client, contacts=None, tags=None, enabled=None, throttling=None, sched=None,
-                 ignore_warnings=False, ignore_recoverings=False, **kwargs):
+                 ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
         """
         
         :param client: api client
@@ -20,6 +20,7 @@ class Subscription(Base):
         :param sched: dict schedule
         :param ignore_warnings: bool ignore warnings
         :param ignore_recoverings: bool ignore recoverings
+        :param plotting: dict plotting settings
         :param kwargs: additional parameters
         """
         self._client = client
@@ -55,6 +56,10 @@ class Subscription(Base):
         self.ignore_warnings = ignore_warnings
         self.ignore_recoverings = ignore_recoverings
 
+        if not plotting:
+            plotting = {'enabled': False, 'theme': 'light'}
+        self.plotting = plotting
+
     def _send_request(self, subscription_id=None):
         data = {
             'contacts': self.contacts,
@@ -63,7 +68,8 @@ class Subscription(Base):
             'throttling': self.throttling,
             'sched': self.sched,
             'ignore_warnings': self.ignore_warnings,
-            'ignore_recoverings': self.ignore_recoverings
+            'ignore_recoverings': self.ignore_recoverings,
+            'plotting': self.plotting
         }
 
         if subscription_id:
@@ -231,7 +237,7 @@ class SubscriptionManager:
         return False
 
     def create(self, contacts=None, tags=None, enabled=True, throttling=True, sched=None,
-               ignore_warnings=False, ignore_recoverings=False, **kwargs):
+               ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
         """
         Create new subscription.
         
@@ -243,6 +249,7 @@ class SubscriptionManager:
         :param ignore_warnings: bool ignore warnings
         :param ignore_recoverings: bool ignore recoverings
         :param kwargs: additional parameters
+        :param plotting: dict plotting settings
         :return: Subscription
         """
         return Subscription(
@@ -254,6 +261,7 @@ class SubscriptionManager:
             sched,
             ignore_warnings,
             ignore_recoverings,
+            plotting,
             **kwargs
         )
 
