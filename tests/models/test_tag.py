@@ -154,11 +154,11 @@ class TagTest(ModelTest):
             }
 
         with patch.object(client, 'get', side_effect=[stats, state, trigger]) as get_mock:
-            triggers = tag_manager.fetch_assigned_triggers(tag_name)
+            triggerIds = tag_manager.fetch_assigned_triggers(tag_name)
 
             self.assertTrue(get_mock.called)
-            get_mock.assert_called_with('trigger/123')
-            self.assertEqual(1, len(triggers))
+            get_mock.assert_called_with('tag/stats')
+            self.assertEqual(1, len(triggerIds))
 
     def test_fetch_assigned_subscriptions(self):
         client = Client(self.api_url)

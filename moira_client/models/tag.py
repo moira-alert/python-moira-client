@@ -82,7 +82,7 @@ class TagManager:
                 if 'triggers' in stat and 'name' in stat:
                     if stat['name'] == tag:
                         for trigger_id in stat['triggers']:
-                            triggers.add(trigger_id)
+                            trigger_ids.add(trigger_id)
                         return list(trigger_ids)
             return list(trigger_ids)
         else:
