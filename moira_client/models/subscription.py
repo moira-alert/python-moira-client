@@ -8,13 +8,13 @@ MINUTES_IN_HOUR = 60
 
 
 class Subscription(Base):
-    def __init__(self, client, contacts=None, tags=None, enabled=None, throttling=None, sched=None,
+    def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
                  ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
         """
         
         :param client: api client
-        :param contacts: list of contact id
         :param tags: list of str tags
+        :param contacts: list of contact id
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
@@ -26,12 +26,10 @@ class Subscription(Base):
         self._client = client
 
         self._id = kwargs.get('id', None)
+        self.tags = tags
         if not contacts:
             contacts = []
         self.contacts = contacts
-        if not tags:
-            tags = []
-        self.tags = tags
         self.enabled = enabled
         self.throttling = throttling
         default_sched = {
@@ -131,6 +129,30 @@ class Subscription(Base):
         :return: None
         """
         self.contacts.append(contact_id)
+
+    def enable_plotting(self, theme='light'):
+        """
+        Enable plotting
+
+        :param theme: str plotting theme
+        :return: None
+        """
+        self.plotting = {
+            'enabled': True,
+            'theme': theme
+            }
+
+    def disable_plotting(self):
+        """
+        Disable plotting
+
+        :return: None
+        """
+        self.plotting = {
+            'enabled': False,
+            'theme': "light"
+            }
+        
 
     def save(self):
         """
@@ -236,13 +258,13 @@ class SubscriptionManager:
                 return True
         return False
 
-    def create(self, contacts=None, tags=None, enabled=True, throttling=True, sched=None,
+    def create(self, tags, contacts=None, enabled=True, throttling=True, sched=None,
                ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
         """
         Create new subscription.
         
-        :param contacts: list of contact id
         :param tags: list of str tags
+        :param contacts: list of contact id
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
@@ -253,9 +275,9 @@ class SubscriptionManager:
         :return: Subscription
         """
         return Subscription(
-            self._client, 
-            contacts,
+            self._client,
             tags,
+            contacts, 
             enabled,
             throttling,
             sched,
