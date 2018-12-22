@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='moira-client',
-    version='2.3.5',
+    version='2.4',
     description='Client for Moira - Alerting system based on Graphite data',
     keywords='moira monitoring client metrics alerting',
     long_description="""
@@ -39,7 +39,7 @@ setup(
         'Topic :: Utilities',
         'Topic :: System :: Monitoring',
 
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+        "License :: OSI Approved :: MIT License"
     ],
     url='https://github.com/moira-alert/python-moira-client',
     install_requires=required

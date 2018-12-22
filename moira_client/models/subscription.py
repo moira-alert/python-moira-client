@@ -8,35 +8,34 @@ MINUTES_IN_HOUR = 60
 
 
 class Subscription(Base):
-    def __init__(self, client, contacts=None, tags=None, enabled=None, throttling=None, sched=None,
-                 ignore_warnings=False, ignore_recoverings=False, **kwargs):
+    def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
+                 ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
         """
         
         :param client: api client
-        :param contacts: list of contact id
         :param tags: list of str tags
+        :param contacts: list of contact id's
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
         :param ignore_warnings: bool ignore warnings
         :param ignore_recoverings: bool ignore recoverings
+        :param plotting: dict plotting settings
         :param kwargs: additional parameters
         """
         self._client = client
 
         self._id = kwargs.get('id', None)
+        self.tags = tags
         if not contacts:
             contacts = []
         self.contacts = contacts
-        if not tags:
-            tags = []
-        self.tags = tags
         self.enabled = enabled
         self.throttling = throttling
         default_sched = {
             'startOffset': 0,
             'endOffset': 1439,
-            'tzOffset': -180
+            'tzOffset': 0
         }
         if not sched:
             sched = default_sched
@@ -55,6 +54,10 @@ class Subscription(Base):
         self.ignore_warnings = ignore_warnings
         self.ignore_recoverings = ignore_recoverings
 
+        if not plotting:
+            plotting = {'enabled': False, 'theme': 'light'}
+        self.plotting = plotting
+
     def _send_request(self, subscription_id=None):
         data = {
             'contacts': self.contacts,
@@ -63,7 +66,8 @@ class Subscription(Base):
             'throttling': self.throttling,
             'sched': self.sched,
             'ignore_warnings': self.ignore_warnings,
-            'ignore_recoverings': self.ignore_recoverings
+            'ignore_recoverings': self.ignore_recoverings,
+            'plotting': self.plotting
         }
 
         if subscription_id:
@@ -125,6 +129,29 @@ class Subscription(Base):
         :return: None
         """
         self.contacts.append(contact_id)
+
+    def enable_plotting(self, theme='light'):
+        """
+        Enable plotting
+
+        :param theme: str plotting theme
+        :return: None
+        """
+        self.plotting = {
+            'enabled': True,
+            'theme': theme
+            }
+
+    def disable_plotting(self):
+        """
+        Disable plotting
+
+        :return: None
+        """
+        self.plotting = {
+            'enabled': False,
+            'theme': 'light'
+            }
 
     def save(self):
         """
@@ -230,30 +257,32 @@ class SubscriptionManager:
                 return True
         return False
 
-    def create(self, contacts=None, tags=None, enabled=True, throttling=True, sched=None,
-               ignore_warnings=False, ignore_recoverings=False, **kwargs):
+    def create(self, tags, contacts=None, enabled=True, throttling=True, sched=None,
+               ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
         """
         Create new subscription.
         
-        :param contacts: list of contact id
         :param tags: list of str tags
+        :param contacts: list of contact id's
         :param enabled: bool is enabled
         :param throttling: bool throttling
         :param sched: dict schedule
         :param ignore_warnings: bool ignore warnings
         :param ignore_recoverings: bool ignore recoverings
         :param kwargs: additional parameters
+        :param plotting: dict plotting settings
         :return: Subscription
         """
         return Subscription(
-            self._client, 
-            contacts,
+            self._client,
             tags,
+            contacts, 
             enabled,
             throttling,
             sched,
             ignore_warnings,
             ignore_recoverings,
+            plotting,
             **kwargs
         )
 
