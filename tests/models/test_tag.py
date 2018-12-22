@@ -72,6 +72,7 @@ class TagTest(ModelTest):
                     'name': tag_name,
                     'subscriptions': [
                         {
+                            'tags': ['test'],
                             'contacts': ['3c01399e-1d40-46dd-934f-318e8255fd3e'],
                             'enabled': True,
                             'id': subscription_id,
@@ -117,6 +118,7 @@ class TagTest(ModelTest):
                     'name': tag_name,
                     'subscriptions': [
                         {
+                            'tags': ['test'],
                             'contacts': ['1'],
                             'enabled': True,
                             'id': subscription_id,
@@ -159,6 +161,7 @@ class TagTest(ModelTest):
                     'name': tag_name,
                     'subscriptions': [
                         {
+                            'tags': ['test'],
                             'contacts': ['1'],
                             'enabled': True,
                             'id': subscription_id,
