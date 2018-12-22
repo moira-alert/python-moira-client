@@ -61,8 +61,6 @@ class TagManager:
                     stat['subscriptions'] = [
                         Subscription(self._client, **subscription) for subscription in stat['subscriptions']
                         ]
-                if 'triggers' in stat:
-                    stat['triggers'] = [trigger_manager.fetch_by_id(trigger_id) for trigger_id in stat['triggers']]
             return [TagStats(**stat) for stat in result['list']]
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
@@ -72,21 +70,21 @@ class TagManager:
         Returns triggers assigned to tag
 
         :param tag: str tag name
-        :return: list of Trigger
+        :return: list of trigger id's
 
         :raises: ResponseStructureError
         """
         result = self._client.get(self._full_path('stats'))
         if 'list' in result:
             trigger_manager = TriggerManager(self._client)
-            triggers = []
+            trigger_ids = set()
             for stat in result['list']:
                 if 'triggers' in stat and 'name' in stat:
                     if stat['name'] == tag:
                         for trigger_id in stat['triggers']:
-                            triggers.append(trigger_manager.fetch_by_id(trigger_id))
-                        return triggers
-            return triggers
+                            triggers.add(trigger_id)
+                        return list(trigger_ids)
+            return list(trigger_ids)
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
 
@@ -95,7 +93,7 @@ class TagManager:
         Returns triggers assigned to at least one tag of tags
 
         :param tags: Iterable of tags
-        :return: list of Trigger
+        :return: list of trigger id's
 
         :raises: ResponseStructureError
         """
@@ -104,18 +102,14 @@ class TagManager:
         result = self._client.get(self._full_path('stats'))
         if 'list' in result:
             trigger_manager = TriggerManager(self._client)
-            triggers_id = set()
+            trigger_ids = set()
             for stat in result['list']:
                 if 'triggers' in stat and 'name' in stat:
                     if stat['name'] in tags:
                         for trigger_id in stat['triggers']:
-                            triggers_id.add(trigger_id)
+                            trigger_ids.add(trigger_id)
 
-            triggers = []
-            for trigger_id in triggers_id:
-                triggers.append(trigger_manager.fetch_by_id(trigger_id))
-
-            return triggers
+            return list(trigger_ids)
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
 
@@ -130,14 +124,14 @@ class TagManager:
         """
         result = self._client.get(self._full_path('stats'))
         if 'list' in result:
-            triggers = []
+            trigger_ids = set() 
             for stat in result['list']:
                 if 'subscriptions' in stat and 'name' in stat:
                     if stat['name'] == tag:
                         return [
                             Subscription(self._client, **subscription) for subscription in stat['subscriptions']
                             ]
-            return triggers
+            return list(trigger_ids)
         else:
             raise ResponseStructureError("list doesn't exist in response", result)
 
