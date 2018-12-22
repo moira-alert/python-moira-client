@@ -150,9 +150,8 @@ class Subscription(Base):
         """
         self.plotting = {
             'enabled': False,
-            'theme': "light"
+            'theme': 'light'
             }
-        
 
     def save(self):
         """
