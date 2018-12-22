@@ -55,7 +55,7 @@ class ClientTest(unittest.TestCase):
             test_path = 'test_path'
             test_data = {'test': 'test'}
 
-            client = Client(TEST_API_URL, AUTH_HEADERS)
+            client = Client(TEST_API_URL, TEST_HEADERS)
             client.put(test_path, data=test_data)
 
         self.assertTrue(mock_put.called)
