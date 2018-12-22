@@ -2,7 +2,8 @@
 
 - Python Moira client is now MIT licensed
 - Changed default timezone offset to UTC
-- Added dictionary attribute with plotting settings to subscription
+- Added dictionary attribute with plotting settings to subscription</br>
+  and corresponding methods enable_plotting(theme) and disable_plotting()
 - Added boolean attribute mute_new_metrics to trigger
 - Optimized tag stats methods (stats, fetch_assigned_triggers, fetch_assigned_triggers_by_tags)<br/>
 to return trigger id's instead of triggers to speed up method execution time
