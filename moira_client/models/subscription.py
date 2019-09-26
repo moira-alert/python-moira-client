@@ -9,9 +9,9 @@ MINUTES_IN_HOUR = 60
 
 class Subscription(Base):
     def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
-                 ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
+                 ignore_warnings=False, ignore_recoverings=False, plotting=None, any_tags=False, **kwargs):
         """
-        
+
         :param client: api client
         :param tags: list of str tags
         :param contacts: list of contact id's
@@ -21,16 +21,18 @@ class Subscription(Base):
         :param ignore_warnings: bool ignore warnings
         :param ignore_recoverings: bool ignore recoverings
         :param plotting: dict plotting settings
+        :param any_tags: bool any tags
         :param kwargs: additional parameters
         """
         self._client = client
 
         self._id = kwargs.get('id', None)
-        self.tags = tags
+        self.tags = tags if not any_tags else []
         if not contacts:
             contacts = []
         self.contacts = contacts
         self.enabled = enabled
+        self.any_tags = any_tags
         self.throttling = throttling
         default_sched = {
             'startOffset': 0,
@@ -258,7 +260,7 @@ class SubscriptionManager:
         return False
 
     def create(self, tags, contacts=None, enabled=True, throttling=True, sched=None,
-               ignore_warnings=False, ignore_recoverings=False, plotting=None, **kwargs):
+               ignore_warnings=False, ignore_recoverings=False, plotting=None, any_tags=False, **kwargs):
         """
         Create new subscription.
         
@@ -271,8 +273,10 @@ class SubscriptionManager:
         :param ignore_recoverings: bool ignore recoverings
         :param kwargs: additional parameters
         :param plotting: dict plotting settings
+        :param any_tags: bool any tags
         :return: Subscription
         """
+
         return Subscription(
             self._client,
             tags,
@@ -283,6 +287,7 @@ class SubscriptionManager:
             ignore_warnings,
             ignore_recoverings,
             plotting,
+            any_tags,
             **kwargs
         )
 
