@@ -34,6 +34,22 @@ class SubscriptionTest(ModelTest):
         self.assertTrue(get_mock.called)
         get_mock.assert_called_with("subscription")
 
+    def test_create_and_save_with_empty_sched_days(self):
+        client = Client(self.api_url)
+        subscription_manager = SubscriptionManager(client)
+
+        subscription = subscription_manager.create(
+            tags=["tag1", "tag2"],
+            contacts=["contact_id"],
+            sched={"days": None, "tzOffset": 0, "startOffset": 0, "endOffset": 0},
+            ignore_warnings=False,
+            ignore_recoverings=False,
+            plotting={"enabled": False, "theme": ""},
+        )
+
+        with self.assertRaises(AttributeError):
+            subscription.save()
+
     def test_delete(self):
         client = Client(self.api_url)
         subscription_manager = SubscriptionManager(client)
