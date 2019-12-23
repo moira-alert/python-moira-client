@@ -2,14 +2,26 @@ from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 from .base import Base
 
-DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 MINUTES_IN_HOUR = 60
 
 
 class Subscription(Base):
-    def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
-                 ignore_warnings=False, ignore_recoverings=False, plotting=None, any_tags=False, **kwargs):
+    def __init__(
+        self,
+        client,
+        tags,
+        contacts=None,
+        enabled=None,
+        throttling=None,
+        sched=None,
+        ignore_warnings=False,
+        ignore_recoverings=False,
+        plotting=None,
+        any_tags=False,
+        **kwargs
+    ):
         """
 
         :param client: api client
@@ -26,7 +38,7 @@ class Subscription(Base):
         """
         self._client = client
 
-        self._id = kwargs.get('id', None)
+        self._id = kwargs.get("id", None)
         self.tags = tags if not any_tags else []
         if not contacts:
             contacts = []
@@ -34,66 +46,68 @@ class Subscription(Base):
         self.enabled = enabled
         self.any_tags = any_tags
         self.throttling = throttling
-        default_sched = {
-            'startOffset': 0,
-            'endOffset': 1439,
-            'tzOffset': 0
-        }
+        default_sched = {"startOffset": 0, "endOffset": 1439, "tzOffset": 0}
         if not sched:
             sched = default_sched
             self.disabled_days = set()
         else:
-            if 'days' in sched and sched['days'] is not None:
-                self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
+            if "days" in sched and sched["days"] is not None:
+                self.disabled_days = {
+                    day["name"] for day in sched["days"] if not day["enabled"]
+                }
         self.sched = sched
 
         # compute time range
-        self._start_hour = self.sched['startOffset'] // MINUTES_IN_HOUR
-        self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
-        self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
-        self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
+        self._start_hour = self.sched["startOffset"] // MINUTES_IN_HOUR
+        self._start_minute = (
+            self.sched["startOffset"] - self._start_hour * MINUTES_IN_HOUR
+        )
+        self._end_hour = self.sched["endOffset"] // MINUTES_IN_HOUR
+        self._end_minute = self.sched["endOffset"] - self._end_hour * MINUTES_IN_HOUR
 
         self.ignore_warnings = ignore_warnings
         self.ignore_recoverings = ignore_recoverings
 
         if not plotting:
-            plotting = {'enabled': False, 'theme': 'light'}
+            plotting = {"enabled": False, "theme": "light"}
         self.plotting = plotting
 
     def _send_request(self, subscription_id=None):
         data = {
-            'contacts': self.contacts,
-            'tags': self.tags,
-            'enabled': self.enabled,
-            'throttling': self.throttling,
-            'sched': self.sched,
-            'ignore_warnings': self.ignore_warnings,
-            'ignore_recoverings': self.ignore_recoverings,
-            'plotting': self.plotting
+            "contacts": self.contacts,
+            "tags": self.tags,
+            "enabled": self.enabled,
+            "throttling": self.throttling,
+            "sched": self.sched,
+            "ignore_warnings": self.ignore_warnings,
+            "ignore_recoverings": self.ignore_recoverings,
+            "plotting": self.plotting,
         }
 
         if subscription_id:
-            data['id'] = subscription_id
+            data["id"] = subscription_id
 
-        data['sched']['days'] = []
+        data["sched"]["days"] = []
         for day in DAYS_OF_WEEK:
             day_info = {
-                'enabled': True if day not in self.disabled_days else False,
-                'name': day
+                "enabled": True if day not in self.disabled_days else False,
+                "name": day,
             }
-            data['sched']['days'].append(day_info)
+            data["sched"]["days"].append(day_info)
 
-        data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
-        data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
+        data["sched"]["startOffset"] = (
+            self._start_hour * MINUTES_IN_HOUR + self._start_minute
+        )
+        data["sched"]["endOffset"] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
 
         if subscription_id:
-            result = self._client.put('subscription/' + subscription_id, json=data)
+            result = self._client.put("subscription/" + subscription_id, json=data)
         else:
-            result = self._client.put('subscription', json=data)
-        if 'id' not in result:
+            result = self._client.put("subscription", json=data)
+        if "id" not in result:
             raise ResponseStructureError("id doesn't exist in response", result)
 
-        self._id = result['id']
+        self._id = result["id"]
         return self._id
 
     def disable_day(self, day):
@@ -132,17 +146,14 @@ class Subscription(Base):
         """
         self.contacts.append(contact_id)
 
-    def enable_plotting(self, theme='light'):
+    def enable_plotting(self, theme="light"):
         """
         Enable plotting
 
         :param theme: str plotting theme
         :return: None
         """
-        self.plotting = {
-            'enabled': True,
-            'theme': theme
-            }
+        self.plotting = {"enabled": True, "theme": theme}
 
     def disable_plotting(self):
         """
@@ -150,10 +161,7 @@ class Subscription(Base):
 
         :return: None
         """
-        self.plotting = {
-            'enabled': False,
-            'theme': 'light'
-            }
+        self.plotting = {"enabled": False, "theme": "light"}
 
     def save(self):
         """
@@ -229,9 +237,9 @@ class SubscriptionManager:
         :raises: ResponseStructureError
         """
         result = self._client.get(self._full_path())
-        if 'list' in result:
+        if "list" in result:
             subscriptions = []
-            for subscription in result['list']:
+            for subscription in result["list"]:
                 subscriptions.append(Subscription(self._client, **subscription))
             return subscriptions
         else:
@@ -259,8 +267,19 @@ class SubscriptionManager:
                 return True
         return False
 
-    def create(self, tags, contacts=None, enabled=True, throttling=True, sched=None,
-               ignore_warnings=False, ignore_recoverings=False, plotting=None, any_tags=False, **kwargs):
+    def create(
+        self,
+        tags,
+        contacts=None,
+        enabled=True,
+        throttling=True,
+        sched=None,
+        ignore_warnings=False,
+        ignore_recoverings=False,
+        plotting=None,
+        any_tags=False,
+        **kwargs
+    ):
         """
         Create new subscription.
         
@@ -280,7 +299,7 @@ class SubscriptionManager:
         return Subscription(
             self._client,
             tags,
-            contacts, 
+            contacts,
             enabled,
             throttling,
             sched,
@@ -301,7 +320,7 @@ class SubscriptionManager:
             self._client.delete(self._full_path(subscription_id))
             return False
         except InvalidJSONError as e:
-            if e.content == b'':  # successfully if response is blank
+            if e.content == b"":  # successfully if response is blank
                 return True
             return False
 
@@ -315,11 +334,12 @@ class SubscriptionManager:
             self._client.put(self._full_path(subscription_id) + "/test")
             return False
         except InvalidJSONError as e:
-            if e.content == b'':  # successfully if response is blank
+            if e.content == b"":  # successfully if response is blank
                 return True
             return False
 
-    def _full_path(self, path=''):
+    def _full_path(self, path=""):
         if path:
-            return 'subscription/' + path
-        return 'subscription'
+            return "subscription/" + path
+        return "subscription"
+
