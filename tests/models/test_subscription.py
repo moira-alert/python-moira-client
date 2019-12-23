@@ -47,8 +47,36 @@ class SubscriptionTest(ModelTest):
             plotting={"enabled": False, "theme": ""},
         )
 
-        with self.assertRaises(AttributeError):
+        with patch.object(client, "put", return_value={"id": "sub_id"}) as put_mock:
             subscription.save()
+
+        self.assertTrue(put_mock.called)
+        put_mock.assert_called_with(
+            "subscription",
+            json={
+                "contacts": ["contact_id"],
+                "tags": ["tag1", "tag2"],
+                "enabled": True,
+                "throttling": True,
+                "sched": {
+                    "days": [
+                        {"enabled": True, "name": "Mon"},
+                        {"enabled": True, "name": "Tue"},
+                        {"enabled": True, "name": "Wed"},
+                        {"enabled": True, "name": "Thu"},
+                        {"enabled": True, "name": "Fri"},
+                        {"enabled": True, "name": "Sat"},
+                        {"enabled": True, "name": "Sun"},
+                    ],
+                    "tzOffset": 0,
+                    "startOffset": 0,
+                    "endOffset": 0,
+                },
+                "ignore_warnings": False,
+                "ignore_recoverings": False,
+                "plotting": {"enabled": False, "theme": ""},
+            },
+        )
 
     def test_delete(self):
         client = Client(self.api_url)

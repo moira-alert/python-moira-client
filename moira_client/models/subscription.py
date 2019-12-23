@@ -47,9 +47,9 @@ class Subscription(Base):
         self.any_tags = any_tags
         self.throttling = throttling
         default_sched = {"startOffset": 0, "endOffset": 1439, "tzOffset": 0}
+        self.disabled_days = set()
         if not sched:
             sched = default_sched
-            self.disabled_days = set()
         else:
             if "days" in sched and sched["days"] is not None:
                 self.disabled_days = {
