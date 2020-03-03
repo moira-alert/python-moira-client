@@ -377,7 +377,19 @@ class TriggerManager:
         :param unix_time int unix time representation of how long the maintenance should be set
         :return:
         """
-        result = self._client.put(self._full_path(trigger_id), {'trigger': unix_time})
+        data = {
+            'trigger': unix_time
+        }
+        trigger_path = self._full_path(trigger_id+"/setMaintenance")
+        try:
+            self._client.put(trigger_path, json=data)
+            return True
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            return False
+
+
         return result
 
     def get_non_existent(self, triggers):

@@ -95,7 +95,10 @@ class TriggerTest(ModelTest):
         duration = 1583249059
 
         with patch.object(client, 'put', return_value={}) as put_mock:
+            data = {
+                'trigger': 1583249059
+            }
             res = trigger_manager.set_maintenance(trigger_id, duration)
             self.assertTrue(put_mock.called)
-            self.assertFalse(bool(res))
-            put_mock.assert_called_with('trigger/'+trigger_id, {'trigger': 1583249059})
+            self.assertTrue(res)
+            put_mock.assert_called_with('trigger/'+trigger_id+'/setMaintenance', json=data)
