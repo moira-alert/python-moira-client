@@ -356,7 +356,6 @@ class TriggerManager:
         except InvalidJSONError:
             return False
 
-
     def is_exist(self, trigger):
         """
         Check whether trigger exists or not
@@ -370,6 +369,16 @@ class TriggerManager:
                 set(trigger.tags) == set(moira_trigger.tags):
                 return True
         return False
+
+    def set_maintenance(self, trigger_id, unix_time):
+        """
+        Puts/remove a Moira trigger to/from maintenance mode
+        :param trigger_id: int ID of the Trigger to modify
+        :param unix_time int unix time representation of how long the maintenance should be set
+        :return:
+        """
+        result = self._client.put(self._full_path(trigger_id), {'trigger': unix_time})
+        return result
 
     def get_non_existent(self, triggers):
         """

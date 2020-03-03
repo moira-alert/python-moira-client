@@ -86,3 +86,16 @@ class TriggerTest(ModelTest):
 
             self.assertTrue(get_mock.called)
             self.assertEqual(trigger_id, trigger.id)
+
+    def test_set_maintenance(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+        duration = 1583249059
+
+        with patch.object(client, 'put', return_value={}) as put_mock:
+            res = trigger_manager.set_maintenance(trigger_id, duration)
+            self.assertTrue(put_mock.called)
+            self.assertFalse(bool(res))
+            put_mock.assert_called_with('trigger/'+trigger_id, {'trigger': 1583249059})
