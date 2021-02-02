@@ -2,7 +2,7 @@ from ..client import ResponseStructureError
 
 
 class WebContact:
-    def __init__(self, _type: str, label: str, **kwargs):
+    def __init__(self, _type, label, **kwargs):
         self.type = _type
         self.label = label
         self.validation = kwargs.get('validation', None)
@@ -11,7 +11,7 @@ class WebContact:
 
 
 class Config:
-    def __init__(self, remote_allowed: bool, contacts: WebContact, **kwargs):
+    def __init__(self, remote_allowed, contacts, **kwargs):
         self.remoteAllowed = remote_allowed
         self.contacts = contacts
         self.supportEmail = kwargs.get('supportEmail', None)
