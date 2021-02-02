@@ -1,5 +1,3 @@
-from typing import List
-
 from ..client import ResponseStructureError
 
 
@@ -13,7 +11,7 @@ class WebContact:
 
 
 class Config:
-    def __init__(self, remote_allowed: bool, contacts: List[WebContact], **kwargs):
+    def __init__(self, remote_allowed: bool, contacts: WebContact, **kwargs):
         self.remoteAllowed = remote_allowed
         self.contacts = contacts
         self.supportEmail = kwargs.get('supportEmail', None)
