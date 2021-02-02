@@ -393,6 +393,27 @@ class TriggerManager:
 
         return non_existent
 
+    def set_maintenance(self, trigger_id, end_time, metrics=None):
+        """
+        Set maintenance trigger id or metric name
+
+        :param trigger_id: str trigger id
+        :param metrics: "metric name" - "end-time" map, end-time like param end_time
+        :param end_time: unix time to end the scheduled maintenance
+        :return: True if success, False otherwise
+        """
+        try:
+            data = {
+                'trigger': end_time,
+            }
+            if metrics is not None:
+                data['metrics'] = metrics
+            self._client.put(self._full_path(trigger_id + '/setMaintenance'), json=data)
+            return True
+        except InvalidJSONError:
+            return False
+
+
     def create(
             self,
             name,
