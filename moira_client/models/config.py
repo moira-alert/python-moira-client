@@ -27,6 +27,7 @@ class ConfigManager:
 
         :return: config
 
+        :raises: ResponseStructureError
         """
         result = self._client.get(self._full_path())
 

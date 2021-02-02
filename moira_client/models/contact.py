@@ -124,6 +124,44 @@ class ContactManager:
             else:
                 return False
 
+    def update(self, contact):
+        """
+        Updates an existing notification contact
+
+        :param contact: Contact
+        :return: True if ok, False otherwise
+        """
+        data = {
+            'type': contact.type,
+            'value': contact.value,
+        }
+
+        try:
+            self._client.put(self._full_path(contact.id), json=data)
+            return False
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            else:
+                return False
+
+    def test(self, contact_id):
+        """
+        Push a test notification to verify that the contact is properly set up.
+
+        :param contact_id: str contact id
+        :return: True if ok, False otherwise
+        """
+
+        try:
+            self._client.post(self._full_path(contact_id)+"/test")
+            return False
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            else:
+                return False
+
     def _full_path(self, path=''):
         if path:
             return 'contact/' + path

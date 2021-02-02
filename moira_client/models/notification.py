@@ -37,6 +37,22 @@ class NotificationManager:
                 return True
             return False
 
+    def delete(self, notification_id):
+        """
+        Remove notification by id
+
+        :param notification_id: str notification id
+
+        :return: True on success, False otherwise
+        """
+        try:
+            result = self._client.delete(self._full_path(notification_id))
+            return False
+        except InvalidJSONError as e:
+            if e.content == b'':  # successfully if response is blank
+                return True
+            return False
+
     def _full_path(self, path=''):
         if path:
             return 'notification/' + path
