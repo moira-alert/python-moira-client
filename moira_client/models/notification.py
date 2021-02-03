@@ -45,12 +45,15 @@ class NotificationManager:
 
         :return: True on success, False otherwise
         """
+
+        params = {
+            'id': notification_id,
+        }
         try:
-            result = self._client.delete(self._full_path(notification_id))
-            return False
-        except InvalidJSONError as e:
-            if e.content == b'':  # successfully if response is blank
+            result = self._client.delete(self._full_path(), params=params)
+            if 'result' in result and result['result'] == 0:
                 return True
+        except InvalidJSONError as e:
             return False
 
     def _full_path(self, path=''):

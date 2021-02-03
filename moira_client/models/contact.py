@@ -138,12 +138,9 @@ class ContactManager:
 
         try:
             self._client.put(self._full_path(contact.id), json=data)
+            return True
+        except InvalidJSONError:
             return False
-        except InvalidJSONError as e:
-            if e.content == b'':  # successfully if response is blank
-                return True
-            else:
-                return False
 
     def test(self, contact_id):
         """
