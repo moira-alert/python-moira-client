@@ -262,6 +262,25 @@ class Trigger(Base):
                 set(self.tags) == set(trigger.tags):
                 return trigger
 
+    def get_metrics(self, _from, to):
+        """
+        Get metrics associated with certain trigger
+
+        :param _from: The start period of metrics to get. Example : -1hour
+        :param to: The end period of metrics to get. Example : now
+
+        :return: Metrics for trigger
+        """
+        try:
+            params = {
+                'from': _from,
+                'to': to,
+            }
+            result = self._client.get('trigger/' + self.id + '/metrics', params=params)
+            return result
+        except InvalidJSONError:
+            return []
+
     def delete_metric(self, metric_name):
         """
         Deletes metric from last check and all trigger pattern metrics
@@ -333,6 +352,29 @@ class TriggerManager:
         elif not 'trigger_id' in result:
             raise ResponseStructureError("invalid api response", result)
 
+    def search(self, only_problems, page, text):
+        """
+        Search triggers
+
+        :param only_problems: Restricts the result to errors only. Example: false
+        :param page: Defines the number of the displayed page. E.g, page=2 would display the 2nd page. Example: 1
+        :param text: Query to perform a search for. Example: cpu
+
+        :return: matching triggers list
+
+        :raises: ResponseStructureError
+        """
+        params = {
+            'onlyProblems': only_problems,
+            'page': page,
+            'text': text,
+        }
+        result = self._client.get(self._full_path(), params=params)
+        if 'list' not in result:
+            raise ResponseStructureError("list doesn't exist in response", result)
+
+        return result
+
     def delete(self, trigger_id):
         """
         Delete trigger by trigger id
@@ -345,6 +387,21 @@ class TriggerManager:
             return False
         except InvalidJSONError:
             return True
+
+    def get_throttling(self, trigger_id):
+        """
+        Get a trigger with its throttling i.e its next allowed message time
+
+        :param trigger_id: str trigger id
+        :return: trigger throttle value or None
+        """
+        try:
+            result = self._client.get(self._full_path(trigger_id + '/throttling'))
+            if 'throttling' in result:
+                return result['throttling']
+            return None
+        except InvalidJSONError:
+            return None
 
     def reset_throttling(self, trigger_id):
         """
@@ -384,7 +441,6 @@ class TriggerManager:
             return True
         except InvalidJSONError:
             return False
-
 
     def is_exist(self, trigger):
         """
