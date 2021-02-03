@@ -27,7 +27,7 @@ class UserManager:
             raise ResponseStructureError("'login' field doesn't exist in response", result)
         return result['login']
 
-    def get_user_setting(self):
+    def get_user_settings(self):
         """
         Get the user's contacts and subscriptions.
 

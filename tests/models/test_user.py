@@ -19,7 +19,7 @@ class UserTest(ModelTest):
 
         with patch.object(client, 'get', return_value={'login': 'aaa', 'contacts': [], 'subscriptions': []}
                           ) as get_mock:
-            res_settings = user_manager.get_user_setting()
+            res_settings = user_manager.get_user_settings()
 
         self.assertEqual(res_settings.login, 'aaa')
 
@@ -75,7 +75,7 @@ class UserTest(ModelTest):
         }
 
         with patch.object(client, 'get', return_value=response) as get_mock:
-            res_settings = user_manager.get_user_setting()
+            res_settings = user_manager.get_user_settings()
 
         self.assertEqual(res_settings.login, 'john')
         self.assertEqual(res_settings.contacts[0].id, '1dd38765-c5be-418d-81fa-7a5f879c2315')

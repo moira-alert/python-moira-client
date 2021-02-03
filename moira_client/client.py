@@ -101,6 +101,23 @@ class Client:
         except ValueError:
             raise InvalidJSONError(r.content)
 
+    def post(self, path='', **kwargs):
+        """
+
+        :param path: str api path
+        :param kwargs: additional parameters for request
+        :return: dict response
+
+        :raises: HTTPError
+        :raises: InvalidJSONError
+        """
+        r = requests.post(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
+        r.raise_for_status()
+        try:
+            return r.json()
+        except ValueError:
+            raise InvalidJSONError(r.content)
+
     def _path_join(self, *args):
         path = self.api_url
         for part in args:

@@ -373,7 +373,7 @@ class TriggerManager:
         if 'list' not in result:
             raise ResponseStructureError("list doesn't exist in response", result)
 
-        return result
+        return result['list']
 
     def delete(self, trigger_id):
         """
@@ -425,6 +425,25 @@ class TriggerManager:
         """
         return self._client.get(self._full_path(trigger_id + '/state'))
 
+    def get_metrics(self, trigger_id, _from, to):
+        """
+        Get metrics associated with certain trigger
+
+        :param _from: The start period of metrics to get. Example : -1hour
+        :param to: The end period of metrics to get. Example : now
+
+        :return: Metrics for trigger
+        """
+        try:
+            params = {
+                'from': _from,
+                'to': to,
+            }
+            result = self._client.get('trigger/' + trigger_id + '/metrics', params=params)
+            return result
+        except InvalidJSONError:
+            return []
+
     def remove_metric(self, trigger_id, metric):
         """
         Remove metric by trigger id
@@ -438,6 +457,19 @@ class TriggerManager:
                 'name': metric
             }
             self._client.delete(self._full_path(trigger_id + '/metrics'), params=params)
+            return True
+        except InvalidJSONError:
+            return False
+
+    def remove_nodata_metrics(self, trigger_id):
+        """
+        Remove metric by trigger id
+
+        :param trigger_id: str trigger id
+        :return: True if removed, False otherwise
+        """
+        try:
+            self._client.delete(self._full_path(trigger_id + '/metrics/nodata'))
             return True
         except InvalidJSONError:
             return False
