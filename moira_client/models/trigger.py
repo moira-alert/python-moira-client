@@ -262,6 +262,35 @@ class Trigger(Base):
                 set(self.tags) == set(trigger.tags):
                 return trigger
 
+    def delete_metric(self, metric_name):
+        """
+        Deletes metric from last check and all trigger pattern metrics
+
+        :param metric_name: str name of the target metric, example: DevOps.my_server.hdd.freespace_mbytes
+
+        :return: True if success, False otherwise
+        """
+        try:
+            params = {
+                'name': metric_name,
+            }
+            self._client.delete('trigger/' + self.id + '/metrics', params=params)
+            return True
+        except InvalidJSONError:
+            return False
+
+    def delete_nodata_metrics(self):
+        """
+        Deletes all metrics from last data which are in NODATA state. It also deletes all trigger patterns of those metrics.
+
+        :return: True if success, False otherwise
+        """
+        try:
+            self._client.delete('trigger/' + self.id + '/metrics/nodata')
+            return True
+        except InvalidJSONError:
+            return False
+
 
 class TriggerManager:
     def __init__(self, client):
@@ -412,7 +441,6 @@ class TriggerManager:
             return True
         except InvalidJSONError:
             return False
-
 
     def create(
             self,
