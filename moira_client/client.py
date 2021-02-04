@@ -37,6 +37,9 @@ class Client:
         else:
             self.api_url = api_url
 
+        if not login and auth_user:
+            login = auth_user
+
         self.auth = None
         self.headers = {
             'X-Webauth-User': login,
