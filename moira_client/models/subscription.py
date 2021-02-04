@@ -65,6 +65,7 @@ class Subscription(Base):
             'contacts': self.contacts,
             'tags': self.tags,
             'enabled': self.enabled,
+            'any_tags': self.any_tags,
             'throttling': self.throttling,
             'sched': self.sched,
             'ignore_warnings': self.ignore_warnings,

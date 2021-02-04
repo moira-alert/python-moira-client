@@ -14,6 +14,32 @@ from .test_model import ModelTest
 
 class SubscriptionTest(ModelTest):
 
+    def test_create(self):
+        client = Client(self.api_url)
+        manager = SubscriptionManager(client)
+
+        tags = ['server', 'cpu']
+        contacts = ['acd2db98-1659-4a2f-b227-52d71f6e3ba1']
+        s = manager.create(tags, contacts)
+
+        with patch.object(client, 'put', return_value={"id": "e5cd5d73-d893-42b5-98b5-f9bd6c7bc501"}) as put_mock:
+            s.save()
+
+        self.assertTrue(put_mock.called)
+        args_ = put_mock.call_args[1]
+        body_json = args_['json']
+        # check required fields
+        self.assertEqual(tags, body_json['tags'])
+        self.assertEqual(contacts, body_json['contacts'])
+        # check default values
+        self.assertEqual(True, body_json['enabled'])
+        self.assertEqual(True, body_json['throttling'])
+        self.assertTrue('sched' in body_json)
+        self.assertEqual(False, body_json['ignore_warnings'])
+        self.assertEqual(False, body_json['ignore_recoverings'])
+        self.assertTrue('plotting' in body_json)
+        self.assertEqual(False, body_json['any_tags'])
+
     def test_fetch_all(self):
         client = Client(self.api_url)
         subscription_manager = SubscriptionManager(client)
