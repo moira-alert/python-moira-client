@@ -36,6 +36,7 @@ class Trigger(Base):
             trigger_type=None,
             is_remote=False,
             mute_new_metrics=False,
+            alone_metrics=None,
             **kwargs):
         """
 
@@ -53,6 +54,7 @@ class Trigger(Base):
         :param trigger_type: str trigger type
         :param is_remote: bool use remote storage
         :param mute_new_metrics: bool mute new metrics
+        :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional parameters
         """
         self._client = client
@@ -90,6 +92,7 @@ class Trigger(Base):
 
         self.is_remote = is_remote
         self.mute_new_metrics = mute_new_metrics
+        self.alone_metrics = alone_metrics
 
     def resolve_type(self, trigger_type):
         """
@@ -160,7 +163,8 @@ class Trigger(Base):
             'expression': self.expression,
             'is_remote': self.is_remote,
             'trigger_type': self.trigger_type,
-            'mute_new_metrics': self.mute_new_metrics
+            'mute_new_metrics': self.mute_new_metrics,
+            'alone_metrics': self.alone_metrics,
         }
 
         if trigger_id:
@@ -545,6 +549,7 @@ class TriggerManager:
             trigger_type=None,
             is_remote=False,
             mute_new_metrics=False,
+            alone_metrics=None,
             **kwargs
     ):
         """
@@ -562,6 +567,7 @@ class TriggerManager:
         :param trigger_type: str trigger type
         :param is_remote: bool use remote storage
         :param mute_new_metrics: bool mute new metrics
+        :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -580,6 +586,7 @@ class TriggerManager:
             trigger_type,
             is_remote,
             mute_new_metrics,
+            alone_metrics,
             **kwargs
         )
 
