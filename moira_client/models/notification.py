@@ -71,5 +71,5 @@ class NotificationManager:
 
     def _full_path(self, path=''):
         if path:
-            return 'notification/' + path
+            return 'notification/{}'.format(path)
         return 'notification'

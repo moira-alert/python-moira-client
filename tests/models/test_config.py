@@ -8,7 +8,7 @@ except ImportError:
 from moira_client.client import Client
 from moira_client.client import ResponseStructureError
 from .test_model import ModelTest
-from moira_client.models.config import ConfigManager, WebContact
+from moira_client.models.config import ConfigManager
 
 
 class ConfigTest(ModelTest):

@@ -35,11 +35,11 @@ class UserManager:
 
         :raises: ResponseStructureError
         """
-        result = self._client.get(self._full_path() + '/settings')
+        result = self._client.get(self._full_path('settings'))
         required = ['login', 'contacts', 'subscriptions']
         for field in required:
             if field not in result:
-                raise ResponseStructureError("'" + field + "' field doesn't exist in response", result)
+                raise ResponseStructureError("'{}' field doesn't exist in response".format(field), result)
 
         contacts = []
         for contact in result['contacts']:
@@ -55,5 +55,5 @@ class UserManager:
 
     def _full_path(self, path=''):
         if path:
-            return 'user/' + path
+            return 'user/{}'.format(path)
         return 'user'

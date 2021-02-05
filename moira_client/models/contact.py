@@ -151,15 +151,15 @@ class ContactManager:
         """
 
         try:
-            self._client.post(self._full_path(contact_id)+"/test")
+            self._client.post(self._full_path('{id}/test'.format(id=contact_id)))
             return False
         except InvalidJSONError as e:
-            if e.content == b'':  # successfully if response is blank
+            if len(e.content) == 0:  # successfully if response is blank
                 return True
             else:
                 return False
 
     def _full_path(self, path=''):
         if path:
-            return 'contact/' + path
+            return 'contact/{}'.format(path)
         return 'contact'

@@ -133,5 +133,5 @@ class TagManager:
 
     def _full_path(self, path=''):
         if path:
-            return 'tag/' + path
+            return 'tag/{}'.format(path)
         return 'tag'

@@ -2,19 +2,19 @@ from ..client import ResponseStructureError
 
 
 class WebContact:
-    def __init__(self, _type, label, **kwargs):
+    def __init__(self, _type, label, validation=None, placeholder=None, _help=None):
         self.type = _type
         self.label = label
-        self.validation = kwargs.get('validation', None)
-        self.placeholder = kwargs.get('placeholder', None)
-        self.help = kwargs.get('help', None)
+        self.validation = validation
+        self.placeholder = placeholder
+        self.help = _help
 
 
 class Config:
-    def __init__(self, remote_allowed, contacts, **kwargs):
+    def __init__(self, remote_allowed, contacts, support_email=None):
         self.remoteAllowed = remote_allowed
         self.contacts = contacts
-        self.supportEmail = kwargs.get('supportEmail', None)
+        self.supportEmail = support_email
 
 
 class ConfigManager:
@@ -39,9 +39,13 @@ class ConfigManager:
         contacts = []
         for contact in result['contacts']:
             if self._validate_contact(contact):
-                contacts.append(WebContact(_type=contact['type'], **contact))
-        result['contacts'] = contacts
-        return Config(result['remoteAllowed'], **result)
+                _help = contact['help'] if 'help' in contact else None
+                validation = contact['validation'] if 'validation' in contact else None
+                placeholder = contact['placeholder'] if 'placeholder' in contact else None
+                contacts.append(WebContact(_type=contact['type'], label=contact['label'], validation=validation,
+                                           placeholder=placeholder, _help=_help))
+        support = result['supportEmail'] if 'supportEmail' in result else None
+        return Config(remote_allowed=result['remoteAllowed'], contacts=contacts, support_email=support)
 
     def _validate_contact(self, contact):
         if 'type' not in contact:
@@ -52,5 +56,5 @@ class ConfigManager:
 
     def _full_path(self, path=''):
         if path:
-            return 'config/' + path
+            return 'config/{}'.format(path)
         return 'config'
