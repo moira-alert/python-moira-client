@@ -61,6 +61,45 @@ class TriggerTest(ModelTest):
         self.assertTrue(res)
         delete_mock.assert_called_with('trigger/' + trigger_id)
 
+    def test_setMaintenance(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+        end_timestamp = 1612260000
+
+        with patch.object(client, 'put') as put_mock:
+            res = trigger_manager.set_maintenance(trigger_id, end_timestamp)
+
+        self.assertTrue(put_mock.called)
+        self.assertTrue(res)
+        expected_request_data = {
+            'trigger': end_timestamp,
+        }
+        put_mock.assert_called_with('trigger/' + trigger_id + '/setMaintenance', json=expected_request_data)
+
+    def test_setMaintenance_with_metrics(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+        end_timestamp = 1612260000
+        metrics = {
+            'metric': end_timestamp,
+            'metric2': 1612260555,
+        }
+
+        with patch.object(client, 'put') as put_mock:
+            res = trigger_manager.set_maintenance(trigger_id, end_timestamp, metrics)
+
+        self.assertTrue(put_mock.called)
+        self.assertTrue(res)
+        expected_request_data = {
+            'trigger': end_timestamp,
+            'metrics': metrics,
+        }
+        put_mock.assert_called_with('trigger/' + trigger_id + '/setMaintenance', json=expected_request_data)
+
     def test_fetch_by_id(self):
         client = Client(self.api_url)
         trigger_manager = TriggerManager(client)

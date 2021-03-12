@@ -62,6 +62,21 @@ class ClientTest(unittest.TestCase):
         expected_url_call = TEST_API_URL + '/' + test_path
         mock_put.assert_called_with(expected_url_call, data=test_data, headers=TEST_HEADERS, auth=None)
 
+    def test_post(self):
+        def post(url, data, **kwargs):
+            pass
+
+        with patch.object(requests, 'post', side_effects=post) as mock_post:
+            test_path = 'test_path'
+            test_data = {'test': 'test'}
+
+            client = Client(TEST_API_URL, TEST_HEADERS)
+            client.post(test_path, data=test_data)
+
+        self.assertTrue(mock_post.called)
+        expected_url_call = TEST_API_URL + '/' + test_path
+        mock_post.assert_called_with(expected_url_call, data=test_data, headers=TEST_HEADERS, auth=None)
+
     def test_delete(self):
 
         def delete(url, **kwargs):

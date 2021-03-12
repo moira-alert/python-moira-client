@@ -7,6 +7,8 @@ from .models.subscription import SubscriptionManager
 from .models.tag import TagManager
 from .models.trigger import TriggerManager
 from .models.health import HealthManager
+from .models.config import ConfigManager
+from .models.user import UserManager
 
 
 class Moira:
@@ -30,6 +32,8 @@ class Moira:
         self._pattern = None
         self._subscription = None
         self._health = None
+        self._config = None
+        self._user = None
 
     @property
     def trigger(self):
@@ -118,3 +122,26 @@ class Moira:
         if not self._health:
             self._health = HealthManager(self._client)
         return self._health
+
+    @property
+    def config(self):
+        """
+        Get config manager
+
+        :return: ConfigManager
+        """
+        if not self._config:
+            self._config = ConfigManager(self._client)
+        return self._config
+
+    @property
+    def user(self):
+        """
+        Get user manager
+
+        :return: UserManager
+
+        """
+        if not self._user:
+            self._user = UserManager(self._client)
+        return self._user

@@ -1,17 +1,13 @@
 from ..client import ResponseStructureError
 from ..client import InvalidJSONError
 from .base import Base
-
-
-DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+from .common import MINUTES_IN_HOUR, get_schedule
 
 STATE_OK = 'OK'
 STATE_WARN = 'WARN'
 STATE_ERROR = 'ERROR'
 STATE_NODATA = 'NODATA'
 STATE_EXCEPTION = 'EXCEPTION'
-
-MINUTES_IN_HOUR = 60
 
 RISING_TRIGGER = 'rising'
 FALLING_TRIGGER = 'falling'
@@ -36,6 +32,7 @@ class Trigger(Base):
             trigger_type=None,
             is_remote=False,
             mute_new_metrics=False,
+            alone_metrics=None,
             **kwargs):
         """
 
@@ -53,6 +50,7 @@ class Trigger(Base):
         :param trigger_type: str trigger type
         :param is_remote: bool use remote storage
         :param mute_new_metrics: bool mute new metrics
+        :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional parameters
         """
         self._client = client
@@ -90,6 +88,7 @@ class Trigger(Base):
 
         self.is_remote = is_remote
         self.mute_new_metrics = mute_new_metrics
+        self.alone_metrics = alone_metrics
 
     def resolve_type(self, trigger_type):
         """
@@ -160,7 +159,8 @@ class Trigger(Base):
             'expression': self.expression,
             'is_remote': self.is_remote,
             'trigger_type': self.trigger_type,
-            'mute_new_metrics': self.mute_new_metrics
+            'mute_new_metrics': self.mute_new_metrics,
+            'alone_metrics': self.alone_metrics,
         }
 
         if trigger_id:
@@ -168,19 +168,11 @@ class Trigger(Base):
             api_response = TriggerManager(
                 self._client).fetch_by_id(trigger_id)
 
-        data['sched']['days'] = []
-        for day in DAYS_OF_WEEK:
-            day_info = {
-                'enabled': True if day not in self.disabled_days else False,
-                'name': day
-            }
-            data['sched']['days'].append(day_info)
-
-        data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
-        data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
+        data['sched'] = get_schedule(self._start_hour, self._start_minute, self._end_hour, self._end_minute,
+                                     self.disabled_days)
 
         if trigger_id and api_response:
-            res = self._client.put('trigger/' + trigger_id, json=data)
+            res = self._client.put('trigger/{id}'.format(id=trigger_id), json=data)
         else:
             res = self._client.put('trigger', json=data)
         if 'id' not in res:
@@ -259,8 +251,57 @@ class Trigger(Base):
         for trigger in trigger_manager.fetch_all():
             if self.name == trigger.name and \
                 set(self.targets) == set(trigger.targets) and \
-                set(self.tags) == set(trigger.tags):
+                    set(self.tags) == set(trigger.tags):
                 return trigger
+
+    def get_metrics(self, start, end):
+        """
+        Get metrics associated with certain trigger
+
+        :param start: The start period of metrics to get. Example : -1hour
+        :param end: The end period of metrics to get. Example : now
+
+        :return: Metrics for trigger
+        """
+        try:
+            params = {
+                'from': start,
+                'to': end,
+            }
+            result = self._client.get('trigger/{id}/metrics'.format(id=self.id), params=params)
+            return result
+        except InvalidJSONError:
+            return []
+
+    def delete_metric(self, metric_name):
+        """
+        Deletes metric from last check and all trigger pattern metrics
+
+        :param metric_name: str name of the target metric, example: DevOps.my_server.hdd.freespace_mbytes
+
+        :return: True if success, False otherwise
+        """
+        try:
+            params = {
+                'name': metric_name,
+            }
+            self._client.delete('trigger/{id}/metrics'.format(id=self.id), params=params)
+            return True
+        except InvalidJSONError:
+            return False
+
+    def delete_nodata_metrics(self):
+        """
+        Deletes all metrics from last data which are in NODATA state.
+        It also deletes all trigger patterns of those metrics.
+
+        :return: True if success, False otherwise
+        """
+        try:
+            self._client.delete('trigger/{id}/metrics/nodata'.format(id=self.id))
+            return True
+        except InvalidJSONError:
+            return False
 
 
 class TriggerManager:
@@ -297,12 +338,35 @@ class TriggerManager:
 
         :raises: ResponseStructureError
         """
-        result = self._client.get(self._full_path(trigger_id + '/state'))
+        result = self._client.get(self._full_path('{id}/state'.format(id=trigger_id)))
         if 'state' in result:
             trigger = self._client.get(self._full_path(trigger_id))
             return Trigger(self._client, **trigger)
         elif not 'trigger_id' in result:
             raise ResponseStructureError("invalid api response", result)
+
+    def search(self, only_problems, page, text):
+        """
+        Search triggers
+
+        :param only_problems: Restricts the result to errors only. Example: false
+        :param page: Defines the number of the displayed page. E.g, page=2 would display the 2nd page. Example: 1
+        :param text: Query to perform a search for. Example: cpu
+
+        :return: matching triggers list
+
+        :raises: ResponseStructureError
+        """
+        params = {
+            'onlyProblems': only_problems,
+            'page': page,
+            'text': text,
+        }
+        result = self._client.get(self._full_path(), params=params)
+        if 'list' not in result:
+            raise ResponseStructureError("list doesn't exist in response", result)
+
+        return result['list']
 
     def delete(self, trigger_id):
         """
@@ -317,6 +381,21 @@ class TriggerManager:
         except InvalidJSONError:
             return True
 
+    def get_throttling(self, trigger_id):
+        """
+        Get a trigger with its throttling i.e its next allowed message time
+
+        :param trigger_id: str trigger id
+        :return: trigger throttle value or None
+        """
+        try:
+            result = self._client.get(self._full_path('{id}/throttling'.format(id=trigger_id)))
+            if 'throttling' in result:
+                return result['throttling']
+            return None
+        except InvalidJSONError:
+            return None
+
     def reset_throttling(self, trigger_id):
         """
         Resets throttling by trigger id
@@ -325,7 +404,7 @@ class TriggerManager:
         :return: True if reset, False otherwise
         """
         try:
-            self._client.delete(self._full_path(trigger_id + '/throttling'))
+            self._client.delete(self._full_path('{id}/throttling'.format(id=trigger_id)))
             return True
         except InvalidJSONError:
             return False
@@ -337,7 +416,27 @@ class TriggerManager:
         :param trigger_id: str trigger id
         :return: state of trigger
         """
-        return self._client.get(self._full_path(trigger_id + '/state'))
+        return self._client.get(self._full_path('{id}/state'.format(id=trigger_id)))
+
+    def get_metrics(self, trigger_id, _from, to):
+        """
+        Get metrics associated with certain trigger
+
+        :param trigger_id: str trigger id
+        :param _from: The start period of metrics to get. Example : -1hour
+        :param to: The end period of metrics to get. Example : now
+
+        :return: Metrics for trigger
+        """
+        try:
+            params = {
+                'from': _from,
+                'to': to,
+            }
+            result = self._client.get(self._full_path('{id}/metrics'.format(id=trigger_id)), params=params)
+            return result
+        except InvalidJSONError:
+            return []
 
     def remove_metric(self, trigger_id, metric):
         """
@@ -351,11 +450,23 @@ class TriggerManager:
             params = {
                 'name': metric
             }
-            self._client.delete(self._full_path(trigger_id + '/metrics'), params=params)
+            self._client.delete(self._full_path('{id}/metrics'.format(id=trigger_id)), params=params)
             return True
         except InvalidJSONError:
             return False
 
+    def remove_nodata_metrics(self, trigger_id):
+        """
+        Remove metric by trigger id
+
+        :param trigger_id: str trigger id
+        :return: True if removed, False otherwise
+        """
+        try:
+            self._client.delete(self._full_path('{id}/metrics/nodata'.format(id=trigger_id)))
+            return True
+        except InvalidJSONError:
+            return False
 
     def is_exist(self, trigger):
         """
@@ -367,7 +478,7 @@ class TriggerManager:
         for moira_trigger in self.fetch_all():
             if trigger.name == moira_trigger.name and \
                 set(trigger.targets) == set(moira_trigger.targets) and \
-                set(trigger.tags) == set(moira_trigger.tags):
+                    set(trigger.tags) == set(moira_trigger.tags):
                 return True
         return False
 
@@ -393,6 +504,26 @@ class TriggerManager:
 
         return non_existent
 
+    def set_maintenance(self, trigger_id, end_time, metrics=None):
+        """
+        Set maintenance trigger id or metric name
+
+        :param trigger_id: str trigger id
+        :param metrics: "metric name" - "end-time" map, end-time like param end_time
+        :param end_time: unix time to end the scheduled maintenance
+        :return: True if success, False otherwise
+        """
+        try:
+            data = {
+                'trigger': end_time,
+            }
+            if metrics is not None:
+                data['metrics'] = metrics
+            self._client.put(self._full_path('{id}/setMaintenance'.format(id=trigger_id)), json=data)
+            return True
+        except InvalidJSONError:
+            return False
+
     def create(
             self,
             name,
@@ -408,6 +539,7 @@ class TriggerManager:
             trigger_type=None,
             is_remote=False,
             mute_new_metrics=False,
+            alone_metrics=None,
             **kwargs
     ):
         """
@@ -425,6 +557,7 @@ class TriggerManager:
         :param trigger_type: str trigger type
         :param is_remote: bool use remote storage
         :param mute_new_metrics: bool mute new metrics
+        :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional trigger params
         :return: Trigger
         """
@@ -443,10 +576,11 @@ class TriggerManager:
             trigger_type,
             is_remote,
             mute_new_metrics,
+            alone_metrics,
             **kwargs
         )
 
     def _full_path(self, path=''):
         if path:
-            return 'trigger/' + path
+            return 'trigger/{}'.format(path)
         return 'trigger'

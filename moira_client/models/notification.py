@@ -13,9 +13,22 @@ class NotificationManager:
 
         :raises: ResponseStructureError
         """
+        result = self.fetch(start=0, end=-1)
+        return result
+
+    def fetch(self, start, end):
+        """
+        Gets a paginated list of notifications
+        :return: list of dict
+
+        :param start
+        :param end
+
+        :raises: ResponseStructureError
+        """
         params = {
-            'start': 0,
-            'end': -1
+            'start': start,
+            'end': end
         }
         result = self._client.get(self._full_path(), params=params)
         if 'list' not in result:
@@ -37,7 +50,26 @@ class NotificationManager:
                 return True
             return False
 
+    def delete(self, notification_id):
+        """
+        Remove notification by id
+
+        :param notification_id: str notification id
+
+        :return: True on success, False otherwise
+        """
+
+        params = {
+            'id': notification_id,
+        }
+        try:
+            result = self._client.delete(self._full_path(), params=params)
+            if 'result' in result and result['result'] == 0:
+                return True
+        except InvalidJSONError as e:
+            return False
+
     def _full_path(self, path=''):
         if path:
-            return 'notification/' + path
+            return 'notification/{}'.format(path)
         return 'notification'

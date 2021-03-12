@@ -37,6 +37,9 @@ class Client:
         else:
             self.api_url = api_url
 
+        if not login and auth_user:
+            login = auth_user
+
         self.auth = None
         self.headers = {
             'X-Webauth-User': login,
@@ -95,6 +98,23 @@ class Client:
         :raises: InvalidJSONError
         """
         r = requests.put(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
+        r.raise_for_status()
+        try:
+            return r.json()
+        except ValueError:
+            raise InvalidJSONError(r.content)
+
+    def post(self, path='', **kwargs):
+        """
+
+        :param path: str api path
+        :param kwargs: additional parameters for request
+        :return: dict response
+
+        :raises: HTTPError
+        :raises: InvalidJSONError
+        """
+        r = requests.post(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
         r.raise_for_status()
         try:
             return r.json()

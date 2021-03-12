@@ -58,5 +58,5 @@ class HealthManager:
 
     def _full_path(self, path=''):
         if path:
-            return 'health/' + path
+            return 'health/{}'.format(path)
         return 'health'

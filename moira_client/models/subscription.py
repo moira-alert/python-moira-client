@@ -1,10 +1,7 @@
 from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 from .base import Base
-
-DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
-MINUTES_IN_HOUR = 60
+from .common import MINUTES_IN_HOUR, get_schedule
 
 
 class Subscription(Base):
@@ -65,6 +62,7 @@ class Subscription(Base):
             'contacts': self.contacts,
             'tags': self.tags,
             'enabled': self.enabled,
+            'any_tags': self.any_tags,
             'throttling': self.throttling,
             'sched': self.sched,
             'ignore_warnings': self.ignore_warnings,
@@ -75,19 +73,11 @@ class Subscription(Base):
         if subscription_id:
             data['id'] = subscription_id
 
-        data['sched']['days'] = []
-        for day in DAYS_OF_WEEK:
-            day_info = {
-                'enabled': True if day not in self.disabled_days else False,
-                'name': day
-            }
-            data['sched']['days'].append(day_info)
-
-        data['sched']['startOffset'] = self._start_hour * MINUTES_IN_HOUR + self._start_minute
-        data['sched']['endOffset'] = self._end_hour * MINUTES_IN_HOUR + self._end_minute
+        data['sched'] = get_schedule(self._start_hour, self._start_minute, self._end_hour, self._end_minute,
+                                     self.disabled_days)
 
         if subscription_id:
-            result = self._client.put('subscription/' + subscription_id, json=data)
+            result = self._client.put('subscription/{id}'.format(id=subscription_id), json=data)
         else:
             result = self._client.put('subscription', json=data)
         if 'id' not in result:
@@ -254,7 +244,7 @@ class SubscriptionManager:
                         equal = False
                         break
                 except Exception:
-                    raise ValueError('Wrong attibute "{}"'.format(attr))
+                    raise ValueError('Wrong attribute "{}"'.format(attr))
             if equal:
                 return True
         return False
@@ -312,7 +302,7 @@ class SubscriptionManager:
         :return: True on success, False otherwise
         """
         try:
-            self._client.put(self._full_path(subscription_id) + "/test")
+            self._client.put(self._full_path('{id}/test'.format(id=subscription_id)))
             return False
         except InvalidJSONError as e:
             if e.content == b'':  # successfully if response is blank
@@ -321,5 +311,5 @@ class SubscriptionManager:
 
     def _full_path(self, path=''):
         if path:
-            return 'subscription/' + path
+            return 'subscription/{}'.format(path)
         return 'subscription'
