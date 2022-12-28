@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='moira-python-client',
-    version='2.6.0',
+    version='2.6.1',
     description='Client for Moira - Alerting system based on Graphite data',
     keywords='moira monitoring client metrics alerting',
     long_description="""

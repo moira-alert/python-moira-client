@@ -1,7 +1,7 @@
 from ..client import ResponseStructureError
 from ..client import InvalidJSONError
 from .base import Base
-from .common import MINUTES_IN_HOUR, get_schedule
+from .common import MINUTES_IN_HOUR, DAYS_OF_WEEK, get_schedule
 
 STATE_OK = 'OK'
 STATE_WARN = 'WARN'
@@ -64,17 +64,18 @@ class Trigger(Base):
         self.desc = desc
         self.ttl = ttl
         self.ttl_state = ttl_state
-        
+
         default_sched = {
             'startOffset': 0,
             'endOffset': 1439,
             'tzOffset': 0
         }
+        self.disabled_days = set()
+
         if not sched:
             sched = default_sched
-            self.disabled_days = set()
         else:
-            if 'days' in sched:
+            if 'days' in sched and sched['days'] is not None:
                 self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
         self.sched = sched
         self.expression = expression
@@ -85,6 +86,7 @@ class Trigger(Base):
         self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
         self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
+        self._timezone_offset = self.sched['tzOffset']
 
         self.is_remote = is_remote
         self.mute_new_metrics = mute_new_metrics
@@ -169,7 +171,7 @@ class Trigger(Base):
                 self._client).fetch_by_id(trigger_id)
 
         data['sched'] = get_schedule(self._start_hour, self._start_minute, self._end_hour, self._end_minute,
-                                     self.disabled_days)
+                                     self.disabled_days, self._timezone_offset)
 
         if trigger_id and api_response:
             res = self._client.put('trigger/{id}'.format(id=trigger_id), json=data)
@@ -250,7 +252,7 @@ class Trigger(Base):
         trigger_manager = TriggerManager(self._client)
         for trigger in trigger_manager.fetch_all():
             if self.name == trigger.name and \
-                set(self.targets) == set(trigger.targets) and \
+                    set(self.targets) == set(trigger.targets) and \
                     set(self.tags) == set(trigger.tags):
                 return trigger
 
@@ -477,7 +479,7 @@ class TriggerManager:
         """
         for moira_trigger in self.fetch_all():
             if trigger.name == moira_trigger.name and \
-                set(trigger.targets) == set(moira_trigger.targets) and \
+                    set(trigger.targets) == set(moira_trigger.targets) and \
                     set(trigger.tags) == set(moira_trigger.tags):
                 return True
         return False
@@ -495,8 +497,8 @@ class TriggerManager:
             exist = False
             for moira_trigger in moira_triggers:
                 if trigger.name == moira_trigger.name and \
-                                set(trigger.targets) == set(moira_trigger.targets) and \
-                                set(trigger.tags) == set(moira_trigger.tags):
+                        set(trigger.targets) == set(moira_trigger.targets) and \
+                        set(trigger.tags) == set(moira_trigger.tags):
                     exist = True
                     break
             if not exist:

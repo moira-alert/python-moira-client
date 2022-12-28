@@ -36,9 +36,10 @@ class Subscription(Base):
             'endOffset': 1439,
             'tzOffset': 0
         }
+        self.disabled_days = set()
+
         if not sched:
             sched = default_sched
-            self.disabled_days = set()
         else:
             if 'days' in sched and sched['days'] is not None:
                 self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
@@ -49,6 +50,7 @@ class Subscription(Base):
         self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
         self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
         self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
+        self._timezone_offset = self.sched['tzOffset']
 
         self.ignore_warnings = ignore_warnings
         self.ignore_recoverings = ignore_recoverings
@@ -74,7 +76,7 @@ class Subscription(Base):
             data['id'] = subscription_id
 
         data['sched'] = get_schedule(self._start_hour, self._start_minute, self._end_hour, self._end_minute,
-                                     self.disabled_days)
+                                     self.disabled_days, self._timezone_offset)
 
         if subscription_id:
             result = self._client.put('subscription/{id}'.format(id=subscription_id), json=data)
