@@ -9,7 +9,7 @@ Python client for Moira.
 # Installation
 
 ```
-pip install moira-client
+pip install moira-python-client
 ```
 
 # Getting started
