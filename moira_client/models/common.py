@@ -3,7 +3,7 @@ DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 MINUTES_IN_HOUR = 60
 
 
-def get_schedule(start_hour, start_minute, end_hour, end_minute, disabled_days):
+def get_schedule(start_hour, start_minute, end_hour, end_minute, disabled_days, timezone_offset):
     days = []
     for day in DAYS_OF_WEEK:
         day_info = {
@@ -15,4 +15,5 @@ def get_schedule(start_hour, start_minute, end_hour, end_minute, disabled_days):
         'days': days,
         'startOffset': start_hour * MINUTES_IN_HOUR + start_minute,
         'endOffset': end_hour * MINUTES_IN_HOUR + end_minute,
+        'tzOffset': timezone_offset,
     }
