@@ -1,7 +1,6 @@
 from ..client import ResponseStructureError
 from ..client import InvalidJSONError
 from .base import Base
-from .common import MINUTES_IN_HOUR, DAYS_OF_WEEK, get_schedule
 
 STATE_OK = 'OK'
 STATE_WARN = 'WARN'
@@ -64,29 +63,9 @@ class Trigger(Base):
         self.desc = desc
         self.ttl = ttl
         self.ttl_state = ttl_state
-
-        default_sched = {
-            'startOffset': 0,
-            'endOffset': 1439,
-            'tzOffset': 0
-        }
-        self.disabled_days = set()
-
-        if not sched:
-            sched = default_sched
-        else:
-            if 'days' in sched and sched['days'] is not None:
-                self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
         self.sched = sched
         self.expression = expression
         self.trigger_type = self.resolve_type(trigger_type)
-
-        # compute time range
-        self._start_hour = self.sched['startOffset'] // MINUTES_IN_HOUR
-        self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
-        self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
-        self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
-        self._timezone_offset = self.sched['tzOffset']
 
         self.is_remote = is_remote
         self.mute_new_metrics = mute_new_metrics
@@ -167,18 +146,16 @@ class Trigger(Base):
 
         if trigger_id:
             data['id'] = trigger_id
-            api_response = TriggerManager(
-                self._client).fetch_by_id(trigger_id)
-
-        data['sched'] = get_schedule(self._start_hour, self._start_minute, self._end_hour, self._end_minute,
-                                     self.disabled_days, self._timezone_offset)
+            api_response = TriggerManager(self._client).fetch_by_id(trigger_id)
 
         if trigger_id and api_response:
             res = self._client.put('trigger/{id}'.format(id=trigger_id), json=data)
         else:
             res = self._client.put('trigger', json=data)
+        
         if 'id' not in res:
             raise ResponseStructureError('id not in response', res)
+        
         self._id = res['id']
         return self._id
 
