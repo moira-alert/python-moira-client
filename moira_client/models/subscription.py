@@ -1,8 +1,6 @@
 from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 from .base import Base
-from .common import MINUTES_IN_HOUR, get_schedule
-
 
 class Subscription(Base):
     def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
@@ -31,26 +29,8 @@ class Subscription(Base):
         self.enabled = enabled
         self.any_tags = any_tags
         self.throttling = throttling
-        default_sched = {
-            'startOffset': 0,
-            'endOffset': 1439,
-            'tzOffset': 0
-        }
-        self.disabled_days = set()
 
-        if not sched:
-            sched = default_sched
-        else:
-            if 'days' in sched and sched['days'] is not None:
-                self.disabled_days = {day['name'] for day in sched['days'] if not day['enabled']}
         self.sched = sched
-
-        # compute time range
-        self._start_hour = self.sched['startOffset'] // MINUTES_IN_HOUR
-        self._start_minute = self.sched['startOffset'] - self._start_hour * MINUTES_IN_HOUR
-        self._end_hour = self.sched['endOffset'] // MINUTES_IN_HOUR
-        self._end_minute = self.sched['endOffset'] - self._end_hour * MINUTES_IN_HOUR
-        self._timezone_offset = self.sched['tzOffset']
 
         self.ignore_warnings = ignore_warnings
         self.ignore_recoverings = ignore_recoverings
@@ -74,9 +54,6 @@ class Subscription(Base):
 
         if subscription_id:
             data['id'] = subscription_id
-
-        data['sched'] = get_schedule(self._start_hour, self._start_minute, self._end_hour, self._end_minute,
-                                     self.disabled_days, self._timezone_offset)
 
         if subscription_id:
             result = self._client.put('subscription/{id}'.format(id=subscription_id), json=data)
