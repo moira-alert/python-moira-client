@@ -14,6 +14,7 @@ EXPRESSION_TRIGGER = 'expression'
 
 
 class Trigger(Base):
+    QUERY_PARAM_VALIDATE_FLAG = 'validate'
 
     def __init__(
             self,
@@ -149,13 +150,13 @@ class Trigger(Base):
             api_response = TriggerManager(self._client).fetch_by_id(trigger_id)
 
         if trigger_id and api_response:
-            res = self._client.put('trigger/{id}'.format(id=trigger_id), json=data)
+            res = self._client.put('trigger/{id}?{validate}'.format(id=trigger_id, validate=self.QUERY_PARAM_VALIDATE_FLAG), json=data)
         else:
-            res = self._client.put('trigger', json=data)
-        
+            res = self._client.put(f'trigger?{self.QUERY_PARAM_VALIDATE_FLAG}', json=data)
+
         if 'id' not in res:
             raise ResponseStructureError('id not in response', res)
-        
+
         self._id = res['id']
         return self._id
 
