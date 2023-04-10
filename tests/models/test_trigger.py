@@ -142,7 +142,7 @@ class TriggerTest(ModelTest):
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
                 self.assertEqual(put_mock.call_args[0][0], f'trigger?{self.QUERY_PARAM_VALIDATE_FLAG}')
-                self.assertEqual(result_id, trigger_id)
+                self.assertEqual(result_id['id'], trigger_id)
 
     def test_save_existing_trigger(self):
         client = Client(self.api_url)
@@ -172,7 +172,7 @@ class TriggerTest(ModelTest):
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
                 self.assertEqual(put_mock.call_args[0][0], f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}')
-                self.assertEqual(result_id, trigger_id)
+                self.assertEqual(result_id['id'], trigger_id)
 
     def test_save_trigger_with_id(self):
         client = Client(self.api_url)
@@ -198,4 +198,4 @@ class TriggerTest(ModelTest):
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
                 self.assertEqual(put_mock.call_args[0][0], f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}')
-                self.assertEqual(result_id, trigger_id)
+                self.assertEqual(result_id['id'], trigger_id)
