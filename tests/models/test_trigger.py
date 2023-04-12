@@ -13,6 +13,7 @@ from .test_model import ModelTest
 
 
 class TriggerTest(ModelTest):
+    QUERY_PARAM_VALIDATE_FLAG = 'validate'
 
     def test_fetch_all(self):
         client = Client(self.api_url)
@@ -109,7 +110,7 @@ class TriggerTest(ModelTest):
         state = {
             'state': 'OK',
             'trigger_id': trigger_id
-            }
+        }
 
         trigger = {
             'id': trigger_id,
@@ -118,10 +119,83 @@ class TriggerTest(ModelTest):
             'targets': ['pattern'],
             'warn_value': 0,
             'error_value': 1
-            }
+        }
 
         with patch.object(client, 'get', side_effect=[state, trigger]) as get_mock:
             trigger = trigger_manager.fetch_by_id(trigger_id)
 
             self.assertTrue(get_mock.called)
             self.assertEqual(trigger_id, trigger.id)
+
+    def test_save_new_trigger(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create('Name', ['tag'], ['target'])
+
+        with patch.object(client, 'get', return_value={'list': []}) as get_mock:
+            trigger_id = '1'
+
+            with patch.object(client, 'put', return_value={'id': trigger_id}) as put_mock:
+                result_id = trigger.save()
+
+                self.assertTrue(get_mock.called)
+                self.assertTrue(put_mock.called)
+                self.assertEqual(put_mock.call_args[0][0], f'trigger?{self.QUERY_PARAM_VALIDATE_FLAG}')
+                self.assertEqual(result_id, trigger_id)
+
+    def test_save_existing_trigger(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+
+        state = {
+            'state': 'OK',
+            'trigger_id': trigger_id
+        }
+        trigger = {
+            'name': 'Name',
+            'tags': ['tag'],
+            'targets': ['target'],
+        }
+        trigger_from_response = {
+            'id': trigger_id,
+            **trigger
+        }
+
+        with patch.object(client, 'get', side_effect=[{'list': [trigger_from_response]}, state, trigger_from_response]) as get_mock:
+            trigger_dto = trigger_manager.create(**trigger)
+            with patch.object(client, 'put', return_value={'id': trigger_id}) as put_mock:
+                result_id = trigger_dto.save()
+
+                self.assertTrue(get_mock.called)
+                self.assertTrue(put_mock.called)
+                self.assertEqual(put_mock.call_args[0][0], f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}')
+                self.assertEqual(result_id, trigger_id)
+
+    def test_save_trigger_with_id(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+        state = {
+            'state': 'OK',
+            'trigger_id': trigger_id
+        }
+        trigger = {
+            'id': trigger_id,
+            'name': 'Name',
+            'tags': ['tag'],
+            'targets': ['target'],
+        }
+
+        with patch.object(client, 'get', side_effect=[state, trigger]) as get_mock:
+            trigger_dto = trigger_manager.create(**trigger)
+            with patch.object(client, 'put', return_value={'id': trigger_id}) as put_mock:
+                result_id = trigger_dto.save()
+
+                self.assertTrue(get_mock.called)
+                self.assertTrue(put_mock.called)
+                self.assertEqual(put_mock.call_args[0][0], f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}')
+                self.assertEqual(result_id, trigger_id)
