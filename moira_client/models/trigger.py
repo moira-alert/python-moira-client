@@ -150,7 +150,7 @@ class Trigger(Base):
             api_response = TriggerManager(self._client).fetch_by_id(trigger_id)
 
         if trigger_id and api_response:
-            res = self._client.put('trigger/{id}?{validate}'.format(id=trigger_id, validate=self.QUERY_PARAM_VALIDATE_FLAG), json=data)
+            res = self._client.put(f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}', json=data)
         else:
             res = self._client.put(f'trigger?{self.QUERY_PARAM_VALIDATE_FLAG}', json=data)
 
