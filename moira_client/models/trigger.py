@@ -158,13 +158,13 @@ class Trigger(Base):
             raise ResponseStructureError('id not in response', res)
 
         self._id = res['id']
-        return self._id
+        return res
 
     def save(self):
         """
         Save trigger
 
-        :return: trigger_id
+        :return: response object
         """
         if self._id:
             return self.update()
@@ -172,8 +172,7 @@ class Trigger(Base):
 
         if trigger:
             self._id = trigger.id
-            self.update()
-            return trigger.id
+            return self.update()
 
         return self._send_request()
 
@@ -181,7 +180,7 @@ class Trigger(Base):
         """
         Update trigger
 
-        :return: trigger id
+        :return: response object
         """
         return self._send_request(self._id)
 
