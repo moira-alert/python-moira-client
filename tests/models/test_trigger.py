@@ -141,7 +141,7 @@ class TriggerTest(ModelTest):
 
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
-                self.assertEqual(put_mock.call_args[0][0], f'trigger?{self.QUERY_PARAM_VALIDATE_FLAG}')
+                self.assertEqual(put_mock.call_args[0][0], 'trigger?{}'.format(self.QUERY_PARAM_VALIDATE_FLAG))
                 self.assertEqual(result['id'], trigger_id)
 
     def test_save_existing_trigger(self):
@@ -171,7 +171,7 @@ class TriggerTest(ModelTest):
 
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
-                self.assertEqual(put_mock.call_args[0][0], f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}')
+                self.assertEqual(put_mock.call_args[0][0], 'trigger/{}?{}'.format(trigger_id, self.QUERY_PARAM_VALIDATE_FLAG))
                 self.assertEqual(result['id'], trigger_id)
 
     def test_save_trigger_with_id(self):
@@ -197,5 +197,5 @@ class TriggerTest(ModelTest):
 
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
-                self.assertEqual(put_mock.call_args[0][0], f'trigger/{trigger_id}?{self.QUERY_PARAM_VALIDATE_FLAG}')
+                self.assertEqual(put_mock.call_args[0][0], 'trigger/{}?{}'.format(trigger_id, self.QUERY_PARAM_VALIDATE_FLAG))
                 self.assertEqual(result['id'], trigger_id)
