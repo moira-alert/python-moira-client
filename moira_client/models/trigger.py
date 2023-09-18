@@ -36,7 +36,7 @@ class Trigger(Base):
             is_remote=False,
             mute_new_metrics=False,
             alone_metrics=None,
-            trigger_source=GRAPHITE_LOCAL
+            trigger_source=GRAPHITE_LOCAL,
             **kwargs):
         """
 
