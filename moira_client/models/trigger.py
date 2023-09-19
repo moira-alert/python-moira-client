@@ -552,10 +552,10 @@ class TriggerManager:
         :return: Trigger
         """
         return Trigger(
-            self._client,
-            name,
-            tags,
-            targets,
+            client=self._client,
+            name=name,
+            tags=tags,
+            targets=targets,
             warn_value=warn_value,
             error_value=error_value,
             desc=desc,
