@@ -36,7 +36,7 @@ class Trigger(Base):
             is_remote=False,
             mute_new_metrics=False,
             alone_metrics=None,
-            trigger_source=GRAPHITE_LOCAL,
+            trigger_source=None,
             **kwargs):
         """
 
@@ -149,8 +149,10 @@ class Trigger(Base):
             'trigger_type': self.trigger_type,
             'mute_new_metrics': self.mute_new_metrics,
             'alone_metrics': self.alone_metrics,
-            'trigger_source': self.trigger_source,
         }
+
+        if self.trigger_source:
+            data['trigger_source'] = self.trigger_source
 
         if trigger_id:
             data['id'] = trigger_id
@@ -526,7 +528,7 @@ class TriggerManager:
             is_remote=False,
             mute_new_metrics=False,
             alone_metrics=None,
-            trigger_source=GRAPHITE_LOCAL,
+            trigger_source=None,
             **kwargs
     ):
         """
