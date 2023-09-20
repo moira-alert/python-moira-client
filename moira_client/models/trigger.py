@@ -12,6 +12,9 @@ RISING_TRIGGER = 'rising'
 FALLING_TRIGGER = 'falling'
 EXPRESSION_TRIGGER = 'expression'
 
+GRAPHITE_LOCAL = 'graphite_local'
+GRAPHITE_REMOTE = 'graphite_remote'
+PROMETHEUS_REMOTE = 'prometheus_remote'
 
 class Trigger(Base):
     QUERY_PARAM_VALIDATE_FLAG = 'validate'
@@ -33,6 +36,7 @@ class Trigger(Base):
             is_remote=False,
             mute_new_metrics=False,
             alone_metrics=None,
+            trigger_source=None,
             **kwargs):
         """
 
@@ -52,6 +56,7 @@ class Trigger(Base):
         :param mute_new_metrics: bool mute new metrics
         :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional parameters
+        :param trigger_source: str specify trigger source, overrides is_remote 
         """
         self._client = client
 
@@ -69,6 +74,7 @@ class Trigger(Base):
         self.trigger_type = self.resolve_type(trigger_type)
 
         self.is_remote = is_remote
+        self.trigger_source = trigger_source
         self.mute_new_metrics = mute_new_metrics
         self.alone_metrics = alone_metrics
 
@@ -144,6 +150,9 @@ class Trigger(Base):
             'mute_new_metrics': self.mute_new_metrics,
             'alone_metrics': self.alone_metrics,
         }
+
+        if self.trigger_source:
+            data['trigger_source'] = self.trigger_source
 
         if trigger_id:
             data['id'] = trigger_id
@@ -519,6 +528,7 @@ class TriggerManager:
             is_remote=False,
             mute_new_metrics=False,
             alone_metrics=None,
+            trigger_source=None,
             **kwargs
     ):
         """
@@ -538,24 +548,26 @@ class TriggerManager:
         :param mute_new_metrics: bool mute new metrics
         :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional trigger params
+        :param trigger_source: str specify trigger source, overrides is_remote 
         :return: Trigger
         """
         return Trigger(
-            self._client,
-            name,
-            tags,
-            targets,
-            warn_value,
-            error_value,
-            desc,
-            ttl,
-            ttl_state,
-            sched,
-            expression,
-            trigger_type,
-            is_remote,
-            mute_new_metrics,
-            alone_metrics,
+            client=self._client,
+            name=name,
+            tags=tags,
+            targets=targets,
+            warn_value=warn_value,
+            error_value=error_value,
+            desc=desc,
+            ttl=ttl,
+            ttl_state=ttl_state,
+            sched=sched,
+            expression=expression,
+            trigger_type=trigger_type,
+            is_remote=is_remote,
+            mute_new_metrics=mute_new_metrics,
+            alone_metrics=alone_metrics,
+            trigger_source=trigger_source,
             **kwargs
         )
 
