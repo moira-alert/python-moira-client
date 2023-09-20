@@ -40,5 +40,7 @@ jobs:
       - name: Publish distribution 📦 to PyPI
         if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@master
+        env:
+          PYTHON_MOIRA_CLIENT_VERSION: ${{  github.ref_name }}
         with:
           password: ${{ secrets.PYPI_API_TOKEN_V2 }}
