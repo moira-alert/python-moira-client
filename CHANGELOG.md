@@ -1,3 +1,54 @@
+# 4.1.0
+
+Add support for prometheus trigger creation.
+
+Now you canuse `trigger_source` field in api that overrides `is_remote` field
+
+# 4.0.2
+
+Fix typo
+
+# 4.0.1
+
+Small refactor to satisfy users that use Python < 3.6
+
+# 4.0.0
+
+Make validation for Python-client like validation in Web Moira. It is need to make valiation right and unified for all Moira client sides.
+
+[Use new validation for creating/updating triggers](https://github.com/moira-alert/python-moira-client/commit/3edb4c720d4b80ae8a4bd6117cb2b9cf0c5bec16)
+
+[Return response object instead of string ID](https://github.com/moira-alert/python-moira-client/commit/5f2bccdd11d6ef6a2a548b9c7072037ebf0445c0)
+
+# 3.0.0
+
+‼️ Remove underscore-prefixed fields that contained scheduling time settings:
+
+- `_start_hour`
+- `_start_minute`
+- `_end_hour`
+- `_end_minute`
+- `_timezone_offset`
+- `disabled_days`
+
+Because they were duplicates of data from sched field.
+
+Please use sched field for scheduling settings instead.
+
+# 2.6.1
+
+- Fix missed disabled_days
+- Push only tags create
+
+# 2.6.0
+- Add "/setMaintenance" methods #8
+- Set login equal to auth_user by default if last one is specified #9
+- Add "/config" methods #10
+- Add support for changing moira notification state #16
+
+# 2.5.1
+- Added ability to subscribe for all triggers without specifying tags (moira-alert/moira#236).
+
 # 2.4
 
 - Python Moira client is now MIT licensed
