@@ -26,7 +26,8 @@ jobs:
 
       - name: Build a binary wheel and a source tarball
         run: |
-          PYTHON_MOIRA_CLIENT_VERSION=`echo ${GITHUB_REF_NAME}| sed 's#[^a-zA-Z0-9_\.\-]#_#g'` 
+          PYTHON_MOIRA_CLIENT_VERSION=`echo ${GITHUB_REF_NAME} | sed 's#[^a-zA-Z0-9_\.\-]#_#g'` 
+          echo $PYTHON_MOIRA_CLIENT_VERSION
           python -m build --sdist --wheel --outdir dist/
 #     make this available for test
 #      - name: Publish distribution 📦 to Test PyPI
