@@ -1,5 +1,4 @@
 from distutils.core import setup
-from version import VERSION
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
