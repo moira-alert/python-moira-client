@@ -36,6 +36,7 @@ jobs:
 
           if [ "$VERSION_TAG" != "$VERSION_FILE" ]; then
             echo "Version in file 'version.py' must be the same as the pushed tag"
+            exit 1
           fi
 
           python -m build --sdist --wheel --outdir dist/
