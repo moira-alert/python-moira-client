@@ -3,7 +3,7 @@ from distutils.core import setup
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
-with open("VERSION", "r") as file:
+with open("VERSION.txt", "r") as file:
     version = file.readline()
 
 setup(
