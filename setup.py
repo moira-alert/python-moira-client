@@ -1,12 +1,12 @@
 from distutils.core import setup
-import os
+from version import VERSION
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
     name='moira-python-client',
-    version=os.environ['PYTHON_MOIRA_CLIENT_VERSION'],
+    version=VERSION,
     description='Client for Moira - Alerting system based on Graphite data',
     keywords='moira monitoring client metrics alerting',
     long_description="""
