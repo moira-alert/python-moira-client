@@ -31,17 +31,11 @@ jobs:
             | sed 's#[^a-zA-Z0-9_\.\-]#_#g'` 
           echo "tag version = $VERSION_TAG"
 
-          cat << EOF | python - > __version.txt
-          import version
-          print(version.VERSION)
-          EOF
-
-          VERSION_FILE=$(cat __version.txt)
-          rm __version.txt
+          VERSION_FILE=$(echo 'import version; print(version.VERSION)' | python -)
           echo "file version = $VERSION_FILE"
 
           if [ "$VERSION_TAG" != "$VERSION_FILE" ]; then
-            echo "Version in file 'version.py' must be the same as the puched tag"
+            echo "Version in file 'version.py' must be the same as the pushed tag"
           fi
 
           python -m build --sdist --wheel --outdir dist/
