@@ -534,6 +534,7 @@ class TriggerManager:
             mute_new_metrics=False,
             alone_metrics=None,
             trigger_source=None,
+            cluster_id=None,
             **kwargs
     ):
         """
