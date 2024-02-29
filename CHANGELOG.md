@@ -1,8 +1,14 @@
+# 4.2.0
+
+Add support for multiple clusters in trigger creation
+
+Now you can use `cluster_id` field in api to set non-default cluster for remote triggers. List of available clusters can be seen in api at `https://your-moira-url/api/config`
+
 # 4.1.0
 
 Add support for prometheus trigger creation.
 
-Now you canuse `trigger_source` field in api that overrides `is_remote` field
+Now you can use `trigger_source` field in api that overrides `is_remote` field
 
 # 4.0.2
 

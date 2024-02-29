@@ -37,6 +37,7 @@ class Trigger(Base):
             mute_new_metrics=False,
             alone_metrics=None,
             trigger_source=None,
+            cluster_id=None,
             **kwargs):
         """
 
@@ -57,6 +58,7 @@ class Trigger(Base):
         :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional parameters
         :param trigger_source: str specify trigger source, overrides is_remote 
+        :param cluster_id: str specify cluster id 
         """
         self._client = client
 
@@ -75,6 +77,7 @@ class Trigger(Base):
 
         self.is_remote = is_remote
         self.trigger_source = trigger_source
+        self.cluster_id = cluster_id
         self.mute_new_metrics = mute_new_metrics
         self.alone_metrics = alone_metrics
 
@@ -153,6 +156,8 @@ class Trigger(Base):
 
         if self.trigger_source:
             data['trigger_source'] = self.trigger_source
+        if self.cluster_id:
+            data['cluster_id'] = self.cluster_id
 
         if trigger_id:
             data['id'] = trigger_id
@@ -529,6 +534,7 @@ class TriggerManager:
             mute_new_metrics=False,
             alone_metrics=None,
             trigger_source=None,
+            cluster_id=None,
             **kwargs
     ):
         """
@@ -549,6 +555,7 @@ class TriggerManager:
         :param alone_metrics: dict with targets of alone metrics
         :param kwargs: additional trigger params
         :param trigger_source: str specify trigger source, overrides is_remote 
+        :param cluster_id: str specify cluster id 
         :return: Trigger
         """
         return Trigger(
@@ -568,6 +575,7 @@ class TriggerManager:
             mute_new_metrics=mute_new_metrics,
             alone_metrics=alone_metrics,
             trigger_source=trigger_source,
+            cluster_id=cluster_id,
             **kwargs
         )
 
