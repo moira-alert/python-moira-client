@@ -2,7 +2,7 @@
 
 Add support for multiple clusters in trigger creation
 
-Now you can use `cluster?id` field in api to set non-default cluster for remote triggers
+Now you can use `cluster_id` field in api to set non-default cluster for remote triggers. List of available clusters can be seen in api at `https://your-moira-url/api/config`
 
 # 4.1.0
 
