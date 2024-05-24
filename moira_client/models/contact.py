@@ -35,6 +35,7 @@ class ContactManager:
 
         :param value: str contact value
         :param contact_type: str contact type (one of CONTACT_* constants)
+        :param name: str contact name
         :return: Contact
 
         :raises: ResponseStructureError
