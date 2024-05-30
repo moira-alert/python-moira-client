@@ -1,3 +1,7 @@
+# 4.2.1
+
+Add support for name field in contacts
+
 # 4.2.0
 
 Add support for multiple clusters in trigger creation
