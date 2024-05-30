@@ -21,6 +21,14 @@ class InvalidJSONError(Exception):
         """
         self.content = content
 
+class MoiraApiError(Exception):
+    def __init__(self, body):
+        """
+
+        :param body: response body
+        """
+        self.body = body
+
 
 class Client:
     def __init__(self, api_url, auth_custom=None, auth_user=None, auth_pass=None, login=None):
@@ -64,7 +72,12 @@ class Client:
         :raises: InvalidJSONError
         """
         r = requests.get(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
-        r.raise_for_status()
+        
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise MoiraApiError(r.content)
+
         try:
             return r.json()
         except ValueError:
@@ -81,7 +94,12 @@ class Client:
         :raises: InvalidJSONError
         """
         r = requests.delete(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
-        r.raise_for_status()
+        
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise MoiraApiError(r.content)
+
         try:
             return r.json()
         except ValueError:
@@ -98,7 +116,12 @@ class Client:
         :raises: InvalidJSONError
         """
         r = requests.put(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
-        r.raise_for_status()
+
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise MoiraApiError(r.content)
+
         try:
             return r.json()
         except ValueError:
@@ -115,7 +138,12 @@ class Client:
         :raises: InvalidJSONError
         """
         r = requests.post(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
-        r.raise_for_status()
+        
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise MoiraApiError(r.content)
+
         try:
             return r.json()
         except ValueError:

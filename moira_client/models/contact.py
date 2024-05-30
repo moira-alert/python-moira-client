@@ -21,6 +21,7 @@ class Contact(Base):
         self.type = type
         self.value = value
         self.user = kwargs.get('user', None)
+        self.name = kwargs.get('name', None)
         self._id = kwargs.get('id', None)
 
 
@@ -28,25 +29,33 @@ class ContactManager:
     def __init__(self, client):
         self._client = client
 
-    def add(self, value, contact_type):
+    def add(self, value, contact_type, name=None):
         """
         Add new contact
 
         :param value: str contact value
         :param contact_type: str contact type (one of CONTACT_* constants)
+        :param name: str contact name
         :return: Contact
 
         :raises: ResponseStructureError
         """
-        data = {
-            'value': value,
-            'type': contact_type
-        }
 
         contacts = self.fetch_by_current_user()
         for contact in contacts:
             if contact.value == value and contact.type == contact_type:
+                if name and contact.name != name:
+                    contact.name = name
+                    self.update(contact)
+                    return contact
                 return contact
+
+        data = {
+            'value': value,
+            'type': contact_type
+        }
+        if name:
+            data['name'] = name
 
         result = self._client.put(self._full_path(), json=data)
         if 'id' not in result:
@@ -135,6 +144,8 @@ class ContactManager:
             'type': contact.type,
             'value': contact.value,
         }
+        if contact.name:
+            data['name'] = contact.name
 
         try:
             self._client.put(self._full_path(contact.id), json=data)
