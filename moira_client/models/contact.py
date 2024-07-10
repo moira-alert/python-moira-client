@@ -2,13 +2,6 @@ from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 from .base import Base
 
-CONTACT_EMAIL = 'mail'
-CONTACT_PUSHOVER = 'pushover'
-CONTACT_SLACK = 'slack'
-CONTACT_TELEGRAM = 'telegram'
-CONTACT_TWILIO_SMS = 'twilio sms'
-CONTACT_TWILIO_VOICE = 'twilio voice'
-
 
 class Contact(Base):
     def __init__(self, value='', type='', **kwargs):
