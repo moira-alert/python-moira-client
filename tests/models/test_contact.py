@@ -13,6 +13,7 @@ from moira_client.models.contact import Contact
 from moira_client.models.contact import ContactManager
 from .test_model import ModelTest
 
+CONTACT_SLACK = 'slack'
 
 class ContactTest(ModelTest):
 

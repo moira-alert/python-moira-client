@@ -9,6 +9,7 @@ from .models.trigger import TriggerManager
 from .models.health import HealthManager
 from .models.config import ConfigManager
 from .models.user import UserManager
+from .models.team import TeamManager
 
 
 class Moira:
@@ -34,6 +35,7 @@ class Moira:
         self._health = None
         self._config = None
         self._user = None
+        self._team = None
 
     @property
     def trigger(self):
@@ -145,3 +147,15 @@ class Moira:
         if not self._user:
             self._user = UserManager(self._client)
         return self._user
+
+    @property
+    def team(self):
+        """
+        Get team manager
+
+        :return: TeamManager
+
+        """
+        if not self._team:
+            self._team = TeamManager(self._client)
+        return self._team
