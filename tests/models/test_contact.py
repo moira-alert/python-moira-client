@@ -8,7 +8,6 @@ except ImportError:
 from moira_client.client import Client
 from moira_client.client import InvalidJSONError
 from moira_client.client import ResponseStructureError
-from moira_client.models.contact import CONTACT_SLACK
 from moira_client.models.contact import Contact
 from moira_client.models.contact import ContactManager
 from .test_model import ModelTest
