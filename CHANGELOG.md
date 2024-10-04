@@ -1,3 +1,7 @@
+# 4.3.0
+
+Add support for Team APIs
+
 # 4.2.1
 
 Add support for name field in contacts

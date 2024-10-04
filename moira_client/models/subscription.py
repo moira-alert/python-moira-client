@@ -2,12 +2,10 @@ from ..client import InvalidJSONError
 from ..client import ResponseStructureError
 from .base import Base
 
-class Subscription(Base):
-    def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
+class SubscriptionModel(Base):
+    def __init__(self, tags, contacts=None, enabled=None, throttling=None, sched=None,
                  ignore_warnings=False, ignore_recoverings=False, plotting=None, any_tags=False, **kwargs):
         """
-
-        :param client: api client
         :param tags: list of str tags
         :param contacts: list of contact id's
         :param enabled: bool is enabled
@@ -19,8 +17,6 @@ class Subscription(Base):
         :param any_tags: bool any tags
         :param kwargs: additional parameters
         """
-        self._client = client
-
         self._id = kwargs.get('id', None)
         self.tags = tags if not any_tags else []
         if not contacts:
@@ -38,32 +34,7 @@ class Subscription(Base):
         if not plotting:
             plotting = {'enabled': False, 'theme': 'light'}
         self.plotting = plotting
-
-    def _send_request(self, subscription_id=None):
-        data = {
-            'contacts': self.contacts,
-            'tags': self.tags,
-            'enabled': self.enabled,
-            'any_tags': self.any_tags,
-            'throttling': self.throttling,
-            'sched': self.sched,
-            'ignore_warnings': self.ignore_warnings,
-            'ignore_recoverings': self.ignore_recoverings,
-            'plotting': self.plotting
-        }
-
-        if subscription_id:
-            data['id'] = subscription_id
-
-        if subscription_id:
-            result = self._client.put('subscription/{id}'.format(id=subscription_id), json=data)
-        else:
-            result = self._client.put('subscription', json=data)
-        if 'id' not in result:
-            raise ResponseStructureError("id doesn't exist in response", result)
-
-        self._id = result['id']
-        return self._id
+        self.team_id = kwargs.get('team_id', None)
 
     def disable_day(self, day):
         """
@@ -124,26 +95,6 @@ class Subscription(Base):
             'theme': 'light'
             }
 
-    def save(self):
-        """
-        Save subscription
-
-        :return: subscription id
-        """
-        if self._id:
-            return self.update()
-        self._send_request()
-
-    def update(self):
-        """
-        Update subscription
-
-        :return: subscription id
-        """
-        if not self._id:
-            return self.save()
-        self._send_request(self._id)
-
     def set_start_hour(self, hour):
         """
         Set start hour
@@ -183,6 +134,85 @@ class Subscription(Base):
         :return: None
         """
         self._end_minute = minute
+
+
+class Subscription(SubscriptionModel):
+    def __init__(self, client, tags, contacts=None, enabled=None, throttling=None, sched=None,
+                 ignore_warnings=False, ignore_recoverings=False, plotting=None, any_tags=False, **kwargs):
+        """
+        :param client: api client
+        :param tags: list of str tags
+        :param contacts: list of contact id's
+        :param enabled: bool is enabled
+        :param throttling: bool throttling
+        :param sched: dict schedule
+        :param ignore_warnings: bool ignore warnings
+        :param ignore_recoverings: bool ignore recoverings
+        :param plotting: dict plotting settings
+        :param any_tags: bool any tags
+        :param kwargs: additional parameters
+        """
+        self._client = client
+
+        super().__init__(
+            tags=tags,
+            contacts=contacts,
+            enabled=enabled,
+            throttling=throttling,
+            sched=sched,
+            ignore_warnings=ignore_warnings,
+            ignore_recoverings=ignore_recoverings,
+            plotting=plotting,
+            any_tags=any_tags,
+            **kwargs,
+        )
+
+    def _send_request(self, subscription_id=None):
+        data = {
+            'contacts': self.contacts,
+            'tags': self.tags,
+            'enabled': self.enabled,
+            'any_tags': self.any_tags,
+            'throttling': self.throttling,
+            'sched': self.sched,
+            'ignore_warnings': self.ignore_warnings,
+            'ignore_recoverings': self.ignore_recoverings,
+            'plotting': self.plotting,
+            'team_id': self.team_id,
+        }
+
+        if subscription_id:
+            data['id'] = subscription_id
+
+        if subscription_id:
+            result = self._client.put('subscription/{id}'.format(id=subscription_id), json=data)
+        else:
+            result = self._client.put('subscription', json=data)
+        if 'id' not in result:
+            raise ResponseStructureError("id doesn't exist in response", result)
+
+        self._id = result['id']
+        return self._id
+
+    def save(self):
+        """
+        Save subscription
+
+        :return: subscription id
+        """
+        if self._id:
+            return self.update()
+        self._send_request()
+
+    def update(self):
+        """
+        Update subscription
+
+        :return: subscription id
+        """
+        if not self._id:
+            return self.save()
+        self._send_request(self._id)
 
 
 class SubscriptionManager:

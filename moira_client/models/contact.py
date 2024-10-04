@@ -23,6 +23,7 @@ class Contact(Base):
         self.user = kwargs.get('user', None)
         self.name = kwargs.get('name', None)
         self._id = kwargs.get('id', None)
+        self.team_id = kwargs.get('team_id', None)
 
 
 class ContactManager:
