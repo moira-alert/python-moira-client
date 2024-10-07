@@ -275,7 +275,7 @@ from moira_client.models.contact import Contact
 team_id = "d5d98eb3-ee18-4f75-9364-244f67e23b54"
 contact_to_create = Contact(
     name="Mail Alerts",
-    team_id="string",
+    team_id=team_id,
     type="mail",
     user="",
     value="devops@example.com",
