@@ -17,7 +17,6 @@ class TestTeamContactManager(ModelTest):
             "name": "Mail Alerts",
             "team_id": "string",
             "type": "mail",
-            "user": "",
             "value": "devops@example.com",
         }
 

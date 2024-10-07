@@ -12,7 +12,6 @@ class TeamContactManager:
             "team_id": team_id,
             "name": contact.name,
             "type": contact.type,
-            "user": contact.user,
             "value": contact.value,
         }
 
