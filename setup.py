@@ -23,7 +23,12 @@ setup(
     author_email = 'al.lukyanchenko@gmail.com',
     packages=[
         'moira_client',
-        'moira_client.models'
+        'moira_client.models',
+        'moira_client.models.team',
+        'moira_client.models.team.contact',
+        'moira_client.models.team.settings',
+        'moira_client.models.team.subscription',
+        'moira_client.models.team.user',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
