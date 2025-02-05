@@ -111,7 +111,7 @@ class TestTeamManager(ModelTest):
         assert response.description == self._response_data["description"]
 
     def test_update(self):
-        with patch.object(self._client, "put", return_value=self._single_response_data) as request:
+        with patch.object(self._client, "patch", return_value=self._single_response_data) as request:
             response = self._manager.update(self._team.id, self._team)
 
         assert len(request.mock_calls) == 1

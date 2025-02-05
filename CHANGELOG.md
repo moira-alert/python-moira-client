@@ -1,3 +1,7 @@
+# 4.3.2
+
+The PATCH method should be used to update a team 
+
 # 4.3.1
 
 Fix package issues
