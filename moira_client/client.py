@@ -68,7 +68,7 @@ class Client:
         :param kwargs: additional parameters for request
         :return: dict response
 
-        :raises: HTTPError
+        :raises: MoiraApiError
         :raises: InvalidJSONError
         """
         r = requests.get(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
@@ -90,7 +90,7 @@ class Client:
         :param kwargs: additional parameters for request
         :return: dict response
 
-        :raises: HTTPError
+        :raises: MoiraApiError
         :raises: InvalidJSONError
         """
         r = requests.delete(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
@@ -112,7 +112,7 @@ class Client:
         :param kwargs: additional parameters for request
         :return: dict response
 
-        :raises: HTTPError
+        :raises: MoiraApiError
         :raises: InvalidJSONError
         """
         r = requests.put(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
@@ -134,7 +134,7 @@ class Client:
         :param kwargs: additional parameters for request
         :return: dict response
 
-        :raises: HTTPError
+        :raises: MoiraApiError
         :raises: InvalidJSONError
         """
         r = requests.patch(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
@@ -156,7 +156,7 @@ class Client:
         :param kwargs: additional parameters for request
         :return: dict response
 
-        :raises: HTTPError
+        :raises: MoiraApiError
         :raises: InvalidJSONError
         """
         r = requests.post(self._path_join(path), headers=self.headers, auth=self.auth, **kwargs)
