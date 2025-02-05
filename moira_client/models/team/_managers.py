@@ -52,7 +52,7 @@ class TeamManager:
             "description": team.description,
         }
 
-        response = self._client.put(self._full_path(team_id), json=payload)
+        response = self._client.patch(self._full_path(team_id), json=payload)
 
         return SaveTeamResponse(**response)
 
