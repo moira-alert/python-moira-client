@@ -22,17 +22,22 @@ class ContactTest(ModelTest):
 
         contact_value = '#channel'
         contact_id = 1
+        contact_type = CONTACT_SLACK
+        existing_contact = {
+            'value': contact_value,
+            'type': contact_type,
+        }
 
         with patch.object(client, 'put', return_value={'id': contact_id}) as put_mock, \
-                patch.object(client, 'get', return_value={'contacts': []}) as get_mock:
-            res_contact = contact_manager.add(contact_value, CONTACT_SLACK)
+                patch.object(client, 'get', return_value={'contacts': [existing_contact]}) as get_mock:
+            res_contact = contact_manager.add(contact_value, contact_type)
 
         self.assertTrue(put_mock.called)
         self.assertTrue(get_mock.called)
 
         expected_request_data = {
             'value': contact_value,
-            'type': CONTACT_SLACK
+            'type': contact_type
         }
 
         expected_contact = Contact(id=contact_id, **expected_request_data)
@@ -46,19 +51,41 @@ class ContactTest(ModelTest):
         contact_manager = ContactManager(client)
 
         contact_value = '#channel'
+        contact_type = CONTACT_SLACK
+        existing_contact = {
+            'value': contact_value,
+            'type': contact_type,
+        }
 
         with patch.object(client, 'put', return_value={}) as put_mock, \
-                patch.object(client, 'get', return_value={'contacts': []}) as get_mock:
+                patch.object(client, 'get', return_value={'contacts': [existing_contact]}) as get_mock:
             with self.assertRaises(ResponseStructureError):
-                contact_manager.add(contact_value, CONTACT_SLACK)
+                contact_manager.add(contact_value, contact_type)
 
         self.assertTrue(put_mock.called)
         self.assertTrue(get_mock.called)
         expected_request_data = {
             'value': contact_value,
-            'type': CONTACT_SLACK
+            'type': contact_type
         }
         put_mock.assert_called_with('contact', json=expected_request_data)
+
+    def test_add_contact_exist(self):
+        client = Client(self.api_url)
+        contact_manager = ContactManager(client)
+        contact_value, contact_type, contact_name = '#channel', CONTACT_SLACK, 'name'
+        existing_contact = {
+            'value': contact_value,
+            'type': contact_type,
+            'name': contact_name,
+        }
+
+        with patch.object(client, 'put', return_value={}) as put_mock, \
+                patch.object(client, 'get', return_value={'contacts': [existing_contact]}) as get_mock:
+            contact_manager.add(contact_value, contact_type, contact_name)
+
+        self.assertTrue(get_mock.called)
+        self.assertFalse(put_mock.called)
 
     def test_fetch_all(self):
         client = Client(self.api_url)

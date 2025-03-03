@@ -45,11 +45,8 @@ class ContactManager:
         contacts = self.fetch_by_current_user()
         for contact in contacts:
             if contact.value == value and contact.type == contact_type:
-                if name and contact.name != name:
-                    contact.name = name
-                    self.update(contact)
+                if name is not None and contact.name == name:
                     return contact
-                return contact
 
         data = {
             'value': value,
