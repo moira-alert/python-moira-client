@@ -1,3 +1,7 @@
+# 5.0.0
+
+‼️ The add method creates a new contact if the passed name does not match an existing one
+
 # 4.3.2
 
 The PATCH method should be used to update a team 
