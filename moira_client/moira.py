@@ -5,6 +5,7 @@ from .models.notification import NotificationManager
 from .models.pattern import PatternManager
 from .models.subscription import SubscriptionManager
 from .models.tag import TagManager
+from .models.system_tag import SystemTagManager
 from .models.trigger import TriggerManager
 from .models.health import HealthManager
 from .models.config import ConfigManager
@@ -27,6 +28,7 @@ class Moira:
 
         self._trigger = None
         self._tag = None
+        self._system_tag = None
         self._event = None
         self._notification = None
         self._contact = None
@@ -47,6 +49,17 @@ class Moira:
         if not self._trigger:
             self._trigger = TriggerManager(self._client)
         return self._trigger
+
+    @property
+    def system_tag(self):
+        """
+        Get system tag manager
+
+        :return: SystemTagManager
+        """
+        if not self._system_tag:
+            self._system_tag = SystemTagManager(self._client)
+        return self._system_tag
 
     @property
     def tag(self):
