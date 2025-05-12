@@ -19,4 +19,4 @@ class SystemTagTest(ModelTest):
             system_tag_manager.fetch_all()
         
         self.assertTrue(get_mock.called)
-        get_mock.assert_called_with('tag')
+        get_mock.assert_called_with('system-tag')
