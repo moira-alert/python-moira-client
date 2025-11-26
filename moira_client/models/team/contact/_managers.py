@@ -13,6 +13,7 @@ class TeamContactManager:
             "name": contact.name,
             "type": contact.type,
             "value": contact.value,
+            "extra_message": contact.extra_message,
         }
 
         response = self._client.post(self._full_path(team_id), json=payload)
