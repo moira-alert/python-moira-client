@@ -18,6 +18,7 @@ class TestTeamContactManager(ModelTest):
             "team_id": "string",
             "type": "mail",
             "value": "devops@example.com",
+            "extra_message": "string",
         }
 
     @property
@@ -29,6 +30,7 @@ class TestTeamContactManager(ModelTest):
             "type": "mail",
             "user": "",
             "value": "devops@example.com",
+            "extra_message": "string",
         }
 
     @property
@@ -59,3 +61,4 @@ class TestTeamContactManager(ModelTest):
         assert response.type == self._response_data["type"]
         assert response.user == self._response_data["user"]
         assert response.value == self._response_data["value"]
+        assert response.extra_message == self._response_data["extra_message"]
