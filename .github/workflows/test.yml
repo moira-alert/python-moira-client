@@ -1,10 +1,10 @@
-name: Python
+name: Python  test
 
 on:
   push
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
