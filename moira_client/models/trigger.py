@@ -22,6 +22,7 @@ class Trigger(Base):
     def __init__(
             self,
             client,
+            team_id,
             name,
             tags,
             targets,
@@ -42,6 +43,7 @@ class Trigger(Base):
         """
 
         :param client: api client
+        :param team_id: str team id of a team that owns this trigger.
         :param name: str trigger name
         :param tags: list of str tags for trigger
         :param targets: list of str targets
@@ -63,6 +65,7 @@ class Trigger(Base):
         self._client = client
 
         self._id = kwargs.get('id', None)
+        self.team_id = team_id
         self.name = name
         self.tags = tags
         self.targets = targets
@@ -338,13 +341,14 @@ class TriggerManager:
         elif not 'trigger_id' in result:
             raise ResponseStructureError("invalid api response", result)
 
-    def search(self, only_problems, page, text):
+    def search(self, only_problems, page, text, team_id):
         """
         Search triggers
 
         :param only_problems: Restricts the result to errors only. Example: false
         :param page: Defines the number of the displayed page. E.g, page=2 would display the 2nd page. Example: 1
         :param text: Query to perform a search for. Example: cpu
+        :param team_id: str team id of a team that owns this trigger.
 
         :return: matching triggers list
 
@@ -354,6 +358,7 @@ class TriggerManager:
             'onlyProblems': only_problems,
             'page': page,
             'text': text,
+            'teamID': team_id,
         }
         result = self._client.get(self._full_path(), params=params)
         if 'list' not in result:
@@ -519,6 +524,7 @@ class TriggerManager:
 
     def create(
             self,
+            team_id,
             name,
             tags,
             targets,
@@ -540,6 +546,7 @@ class TriggerManager:
         """
         Creates new trigger. To save it call save() method of Trigger.
         :param name: str trigger name
+        :param team_id: str team id of a team that owns this trigger.
         :param tags: list of str tags for trigger
         :param targets: list of str targets
         :param warn_value: float warning value (if T1 <= warn_value)
@@ -560,6 +567,7 @@ class TriggerManager:
         """
         return Trigger(
             client=self._client,
+            team_id=team_id,
             name=name,
             tags=tags,
             targets=targets,
