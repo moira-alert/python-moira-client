@@ -22,10 +22,10 @@ class Trigger(Base):
     def __init__(
             self,
             client,
-            team_id,
             name,
             tags,
             targets,
+            team_id=None,
             warn_value=None,
             error_value=None,
             desc='',
@@ -524,10 +524,10 @@ class TriggerManager:
 
     def create(
             self,
-            team_id,
             name,
             tags,
             targets,
+            team_id=None,
             warn_value=None,
             error_value=None,
             desc='',
