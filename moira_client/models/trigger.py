@@ -142,6 +142,7 @@ class Trigger(Base):
     def _send_request(self, trigger_id=None):
         data = {
             'name': self.name,
+            'team_id': self.team_id,
             'tags': self.tags,
             'targets': self.targets,
             'warn_value': self.warn_value,
@@ -341,7 +342,7 @@ class TriggerManager:
         elif not 'trigger_id' in result:
             raise ResponseStructureError("invalid api response", result)
 
-    def search(self, only_problems, page, text, team_id):
+    def search(self, only_problems, page, text, team_id=''):
         """
         Search triggers
 
@@ -360,7 +361,7 @@ class TriggerManager:
             'text': text,
             'teamID': team_id,
         }
-        result = self._client.get(self._full_path(), params=params)
+        result = self._client.get(self._full_path('search'), params=params)
         if 'list' not in result:
             raise ResponseStructureError("list doesn't exist in response", result)
 
