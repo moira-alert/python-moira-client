@@ -25,6 +25,7 @@ class Trigger(Base):
             name,
             tags,
             targets,
+            team_id=None,
             warn_value=None,
             error_value=None,
             desc='',
@@ -42,6 +43,7 @@ class Trigger(Base):
         """
 
         :param client: api client
+        :param team_id: str team id of a team that owns this trigger.
         :param name: str trigger name
         :param tags: list of str tags for trigger
         :param targets: list of str targets
@@ -63,6 +65,7 @@ class Trigger(Base):
         self._client = client
 
         self._id = kwargs.get('id', None)
+        self.team_id = team_id
         self.name = name
         self.tags = tags
         self.targets = targets
@@ -139,6 +142,7 @@ class Trigger(Base):
     def _send_request(self, trigger_id=None):
         data = {
             'name': self.name,
+            'team_id': self.team_id,
             'tags': self.tags,
             'targets': self.targets,
             'warn_value': self.warn_value,
@@ -338,13 +342,14 @@ class TriggerManager:
         elif not 'trigger_id' in result:
             raise ResponseStructureError("invalid api response", result)
 
-    def search(self, only_problems, page, text):
+    def search(self, only_problems, page, text, team_id=''):
         """
         Search triggers
 
         :param only_problems: Restricts the result to errors only. Example: false
         :param page: Defines the number of the displayed page. E.g, page=2 would display the 2nd page. Example: 1
         :param text: Query to perform a search for. Example: cpu
+        :param team_id: str team id of a team that owns this trigger.
 
         :return: matching triggers list
 
@@ -354,8 +359,9 @@ class TriggerManager:
             'onlyProblems': only_problems,
             'page': page,
             'text': text,
+            'teamID': team_id,
         }
-        result = self._client.get(self._full_path(), params=params)
+        result = self._client.get(self._full_path('search'), params=params)
         if 'list' not in result:
             raise ResponseStructureError("list doesn't exist in response", result)
 
@@ -522,6 +528,7 @@ class TriggerManager:
             name,
             tags,
             targets,
+            team_id=None,
             warn_value=None,
             error_value=None,
             desc='',
@@ -540,6 +547,7 @@ class TriggerManager:
         """
         Creates new trigger. To save it call save() method of Trigger.
         :param name: str trigger name
+        :param team_id: str team id of a team that owns this trigger.
         :param tags: list of str tags for trigger
         :param targets: list of str targets
         :param warn_value: float warning value (if T1 <= warn_value)
@@ -560,6 +568,7 @@ class TriggerManager:
         """
         return Trigger(
             client=self._client,
+            team_id=team_id,
             name=name,
             tags=tags,
             targets=targets,
