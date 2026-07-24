@@ -1,19 +1,52 @@
-name: Python  test
-
-on:
-  push
-
+name: moira-test
+on: [push]
+env:
+  TEST_DEPENDENCIES: "tox~=4.15.1"
 jobs:
-  run-tests:
-    runs-on: ubuntu-22.04
+  check-project-files:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python "3.9"
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.9"
-
-    - name: Install dependencies
-      run: make deps
-    - name: Test
-      run: make test
+      - name: variables
+        run: |
+          PROJECT_FILES=(README.md pyproject.toml)
+          ERROR=0
+      - name: test
+        run: |
+          for file in ${PROJECT_FILES[*]}; do
+            if ! [ -f $file ]; then
+            echo "$file not found in project"
+                ERROR=1
+            fi
+          done
+          exit $ERROR
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        linters: [pyproject, lint, format, mypy]
+    steps:
+      - uses: actions/checkout@v4
+      - name: python-build
+        uses: ./.github/actions/python-build
+      - name: install-dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install $TEST_DEPENDENCIES
+      - name: test
+        run: tox -e "${{ matrix.linters }}"
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        minor_versions: [10, 11, 12, 13, 14]
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.${{ matrix.minor_versions }}'
+      - name: install-dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install $TEST_DEPENDENCIES
+      - name: test
+        run: tox -e "py3${{ matrix.minor_versions }}"

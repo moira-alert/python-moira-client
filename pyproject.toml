@@ -1,0 +1,98 @@
+[build-system]
+requires = ["setuptools~=80.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-moira-client"
+authors = [{name="Kontur", email = "python@skbkontur.ru"}]
+description = "Client for Moira"
+readme = "README.md"
+requires-python = ">=3.10, <3.15"
+dependencies = ["http_toolkit~=1.0", "pydantic~=2.0"]
+dynamic = ["version"] # The version is imported from the module attribute specified in section [tool.setuptools.dynamic]
+
+[project.optional-dependencies]
+test = ["pytest~=8.4", "pytest-cov~=7.0", "pytest-asyncio~=1.2", "pytest_httpx>=0.22.0, <0.31.0", "polyfactory~=3.2"]
+
+[project.urls]
+homepage = "https://github.com/moira-alert/python-moira-client"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q --cov-report term-missing --cov moira"
+
+[tool.ruff]
+line-length = 119
+output-format = "grouped"
+show-fixes = true
+target-version = "py310"
+exclude = [".svn", "CVS", ".bzr", ".hg",".git", "__pycache__", ".tox", ".eggs", "*.egg", ".venv", "env", "venv", "build"]
+
+[tool.ruff.lint]
+select = ["W", "E", "F", "I", "N", "DJ", "T20", "Q"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 6
+
+[tool.mypy]
+ignore_missing_imports = true
+explicit_package_bases = true
+install_types = true
+non_interactive = true
+exclude = ["env", "venv", "build"]
+
+[tool.setuptools.dynamic]
+version = {attr = "moira._version.__version__"}
+
+[tool.coverage.run]
+omit = ["**/_version.py"]
+
+[tool.tox]
+requires = ["tox~=4.53"]
+env_list = [
+    "pyproject",
+    "lint",
+    "format",
+    "mypy",
+    {prefix = "py3", start = 10, stop = 14},
+    {prefix = "pypy3", start = 10, stop = 11},
+]
+
+[tool.tox.env_run_base.set_env]
+PIP_INDEX_URL = "{env:PIP_INDEX_URL:https://pypi.kontur.host/}"
+UV_DEFAULT_INDEX = "{env:UV_DEFAULT_INDEX:https://pypi.kontur.host/}"
+PYTHONUTF8 = "1"
+
+[tool.tox.env_run_base]
+extras = ["test"]
+allowlist_externals = ["coverage"]
+commands = [
+    ["pytest", "--junitxml=.reports/{envname}_junit.xml", "{posargs}"]
+]
+commands_post = [
+    { replace = "if", condition = "not (factor.lint or factor.pyproject or factor.format or factor.mypy)", then = [
+        ["coverage", "xml", "-o", ".reports/{envname}_coverage.xml"]
+    ], extend = true },
+]
+
+[tool.tox.env.pyproject]
+skip_install = true
+deps = ["validate-pyproject[all]~=0.24.0"]
+commands = [["validate-pyproject", "pyproject.toml"]]
+
+[tool.tox.env.mypy]
+skip_install = true
+deps = ["mypy~=1.18"]
+commands = [["mypy", "--junit-xml", ".reports/{env:TOX_ENV_NAME}_junit.xml", "."]]
+
+[tool.tox.env.lint]
+skip_install = true
+deps = ["ruff~=0.14.0"]
+commands = [["ruff", "check", ".", "--output-format=full"]]
+
+[tool.tox.env.format]
+skip_install = true
+deps = ["ruff~=0.14.0"]
+commands = [["ruff", "format", "--diff", "."]]
