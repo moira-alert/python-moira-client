@@ -1,6 +1,10 @@
-# 5.1.2
+# 5.2.1
 
 In trigger model new fields were added: warn_for, warn_keep_firing_for, error_for, error_keep_firing_for
+
+# 5.2.0
+
+In trigger model new field was added: team_id
 
 # 5.1.1
 
