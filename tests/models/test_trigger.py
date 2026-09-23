@@ -276,6 +276,7 @@ class TriggerTest(ModelTest):
 
     def test_save_new_trigger_with_new_fields(self):
         client = Client(self.api_url)
+
         trigger_manager = TriggerManager(client)
 
         trigger = trigger_manager.create(
@@ -288,33 +289,21 @@ class TriggerTest(ModelTest):
             error_keep_firing_for=240,
         )
 
-        trigger_id = '1'
+        with patch.object(client, 'get', return_value={'list': []}) as get_mock:
+            trigger_id = '1'
 
-        with patch.object(
-                client,
-                'put',
-                return_value={'id': trigger_id},
-        ) as put_mock:
-            trigger.save()
+            with patch.object(client, 'put', return_value={'id': trigger_id}) as put_mock:
+                result = trigger.save()
 
+        self.assertTrue(get_mock.called)
         self.assertTrue(put_mock.called)
 
-        request_data = put_mock.call_args[1]['json']
+        self.assertEqual(
+            put_mock.call_args[0][0],
+            'trigger?{}'.format(self.QUERY_PARAM_VALIDATE_FLAG),
+        )
 
-        self.assertEqual(request_data['warn_for'], 60)
-        self.assertEqual(request_data['warn_keep_firing_for'], 120)
-        self.assertEqual(request_data['error_for'], 180)
-        self.assertEqual(request_data['error_keep_firing_for'], 240)
-
-
-    def test_save_existing_trigger_with_new_fields(self):
-        client = Client(self.api_url)
-        trigger_manager = TriggerManager(client)
-
-        trigger_id = '1'
-
-        trigger = {
-            'id': trigger_id,
+        expected_request_data = {
             'name': 'Name',
             'tags': ['tag'],
             'targets': ['target'],
@@ -324,18 +313,74 @@ class TriggerTest(ModelTest):
             'error_keep_firing_for': 240,
         }
 
+        self.assertEqual(put_mock.call_args[1]['json'], expected_request_data)
+        self.assertEqual(result['id'], trigger_id)
+
+    def test_save_existing_trigger_with_new_fields(self):
+        client = Client(self.api_url)
+
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+
+        state = {
+            'state': 'OK',
+            'trigger_id': trigger_id,
+        }
+
+        trigger = {
+            'name': 'Name',
+            'tags': ['tag'],
+            'targets': ['target'],
+            'warn_for': 60,
+            'warn_keep_firing_for': 120,
+            'error_for': 180,
+            'error_keep_firing_for': 240,
+        }
+
+        trigger_from_response = {
+            'id': trigger_id,
+            **trigger
+        }
+
         with patch.object(
                 client,
                 'get',
                 side_effect=[
-                    {'list': [trigger]},
-                    {'state': 'OK', 'trigger_id': trigger_id},
-                    trigger,
+                    {'list': [trigger_from_response]},
+                    state,
+                    trigger_from_response,
                 ],
-        ):
+        ) as get_mock:
             trigger_dto = trigger_manager.create(**trigger)
 
-        self.assertEqual(trigger_dto.warn_for, 60)
-        self.assertEqual(trigger_dto.warn_keep_firing_for, 120)
-        self.assertEqual(trigger_dto.error_for, 180)
-        self.assertEqual(trigger_dto.error_keep_firing_for, 240)
+            with patch.object(
+                    client,
+                    'put',
+                    return_value={'id': trigger_id},
+            ) as put_mock:
+                result = trigger_dto.save()
+
+        self.assertTrue(get_mock.called)
+        self.assertTrue(put_mock.called)
+
+        self.assertEqual(
+            put_mock.call_args[0][0],
+            'trigger/{}?{}'.format(
+                trigger_id,
+                self.QUERY_PARAM_VALIDATE_FLAG,
+            ),
+        )
+
+        expected_request_data = {
+            'name': 'Name',
+            'tags': ['tag'],
+            'targets': ['target'],
+            'warn_for': 60,
+            'warn_keep_firing_for': 120,
+            'error_for': 180,
+            'error_keep_firing_for': 240,
+        }
+
+        self.assertEqual(put_mock.call_args[1]['json'], expected_request_data)
+        self.assertEqual(result['id'], trigger_id)
