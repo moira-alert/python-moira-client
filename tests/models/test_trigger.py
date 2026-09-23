@@ -255,7 +255,6 @@ class TriggerTest(ModelTest):
 
         self.assertEqual(trigger.error_keep_firing_for, 240)
 
-
     def test_create_trigger_with_all_new_fields(self):
         client = Client(self.api_url)
         trigger_manager = TriggerManager(client)
