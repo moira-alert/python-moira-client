@@ -1,3 +1,7 @@
+# 5.1.2
+
+In trigger model new fields were added: warn_for, warn_keep_firing_for, error_for, error_keep_firing_for
+
 # 5.1.1
 
 extra_message field in contact support
