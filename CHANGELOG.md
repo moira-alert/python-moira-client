@@ -1,6 +1,6 @@
 # 5.1.2
 
-trigger model added warn_for, warn_keep_firing_for, error_for, error_keep_firing_for fields
+In trigger model new fields were added: warn_for, warn_keep_firing_for, error_for, error_keep_firing_for
 
 # 5.1.1
 
