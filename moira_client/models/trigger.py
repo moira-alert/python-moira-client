@@ -567,11 +567,11 @@ class TriggerManager:
         :param tags: list of str tags for trigger
         :param targets: list of str targets
         :param warn_value: float warning value (if T1 <= warn_value)
-        :param warn_for: float warning value; the condition must continuously evaluate to this status for this many seconds before the alert fires (0 = immediately).
-        :param warn_keep_firing_for: float warning value; the alert stays active this many seconds after the condition no longer evaluates to this status.
+        :param warn_for: float warning value; the condition must continuously evaluate to WARN status for this many seconds before the alert fires (0 = immediately).
+        :param warn_keep_firing_for: float warning value; the alert stays active WARN many seconds after the condition no longer evaluates to this status.
         :param error_value: float error value (if T1 <= error_value)
-        :param error_for: float error value; the condition must continuously evaluate to this status for this many seconds before the alert fires (0 = immediately).
-        :param error_keep_firing_for: float error value; the alert stays active this many seconds after the condition no longer evaluates to this status.
+        :param error_for: float error value; the condition must continuously evaluate to ERROR status for this many seconds before the alert fires (0 = immediately).
+        :param error_keep_firing_for: float error value; the alert stays active ERROR many seconds after the condition no longer evaluates to this status.
         :param desc: str trigger description
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
