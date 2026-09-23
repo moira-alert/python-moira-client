@@ -27,7 +27,11 @@ class Trigger(Base):
             targets,
             team_id=None,
             warn_value=None,
+            warn_for=None,
+            warn_keep_firing_for=None,
             error_value=None,
+            error_for=None,
+            error_keep_firing_for=None,
             desc='',
             ttl=600,
             ttl_state=STATE_NODATA,
@@ -70,7 +74,11 @@ class Trigger(Base):
         self.tags = tags
         self.targets = targets
         self.warn_value = warn_value
+        self.warn_for = warn_for
+        self.warn_keep_firing_for = warn_keep_firing_for
         self.error_value = error_value
+        self.error_for = error_for
+        self.error_keep_firing_for = error_keep_firing_for
         self.desc = desc
         self.ttl = ttl
         self.ttl_state = ttl_state
@@ -146,7 +154,11 @@ class Trigger(Base):
             'tags': self.tags,
             'targets': self.targets,
             'warn_value': self.warn_value,
+            'warn_for': self.warn_for,
+            'warn_keep_firing_for': self.warn_keep_firing_for,
             'error_value': self.error_value,
+            'error_for': self.error_for,
+            'error_keep_firing_for': self.error_keep_firing_for,
             'desc': self.desc,
             'ttl': self.ttl,
             'ttl_state': self.ttl_state,
@@ -530,7 +542,11 @@ class TriggerManager:
             targets,
             team_id=None,
             warn_value=None,
+            warn_for=None,
+            warn_keep_firing_for=None,
             error_value=None,
+            error_for=None,
+            error_keep_firing_for=None,
             desc='',
             ttl=600,
             ttl_state=STATE_NODATA,
@@ -551,7 +567,11 @@ class TriggerManager:
         :param tags: list of str tags for trigger
         :param targets: list of str targets
         :param warn_value: float warning value (if T1 <= warn_value)
+        :param warn_for: float warning value; the condition must continuously evaluate to this status for this many seconds before the alert fires (0 = immediately).
+        :param warn_keep_firing_for: float warning value; the alert stays active this many seconds after the condition no longer evaluates to this status.
         :param error_value: float error value (if T1 <= error_value)
+        :param error_for: float error value; the condition must continuously evaluate to this status for this many seconds before the alert fires (0 = immediately).
+        :param error_keep_firing_for: float error value; the alert stays active this many seconds after the condition no longer evaluates to this status.
         :param desc: str trigger description
         :param ttl: int set ttl_state if has no value for ttl seconds
         :param ttl_state: str state after ttl seconds without data (one of STATE_* constants)
@@ -573,7 +593,11 @@ class TriggerManager:
             tags=tags,
             targets=targets,
             warn_value=warn_value,
+            warn_for=warn_for,
+            warn_keep_firing_for=warn_keep_firing_for,
             error_value=error_value,
+            error_for=error_for,
+            error_keep_firing_for=error_keep_firing_for,
             desc=desc,
             ttl=ttl,
             ttl_state=ttl_state,
