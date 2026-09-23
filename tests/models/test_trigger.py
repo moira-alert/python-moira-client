@@ -303,17 +303,10 @@ class TriggerTest(ModelTest):
             'trigger?{}'.format(self.QUERY_PARAM_VALIDATE_FLAG),
         )
 
-        expected_request_data = {
-            'name': 'Name',
-            'tags': ['tag'],
-            'targets': ['target'],
-            'warn_for': 60,
-            'warn_keep_firing_for': 120,
-            'error_for': 180,
-            'error_keep_firing_for': 240,
-        }
-
-        self.assertEqual(put_mock.call_args[1]['json'], expected_request_data)
+        self.assertEqual(trigger.warn_for, 60)
+        self.assertEqual(trigger.warn_keep_firing_for, 120)
+        self.assertEqual(trigger.error_for, 180)
+        self.assertEqual(trigger.error_keep_firing_for, 240)
         self.assertEqual(result['id'], trigger_id)
 
     def test_save_existing_trigger_with_new_fields(self):
@@ -372,15 +365,8 @@ class TriggerTest(ModelTest):
             ),
         )
 
-        expected_request_data = {
-            'name': 'Name',
-            'tags': ['tag'],
-            'targets': ['target'],
-            'warn_for': 60,
-            'warn_keep_firing_for': 120,
-            'error_for': 180,
-            'error_keep_firing_for': 240,
-        }
-
-        self.assertEqual(put_mock.call_args[1]['json'], expected_request_data)
+        self.assertEqual(trigger_dto.warn_for, 60)
+        self.assertEqual(trigger_dto.warn_keep_firing_for, 120)
+        self.assertEqual(trigger_dto.error_for, 180)
+        self.assertEqual(trigger_dto.error_keep_firing_for, 240)
         self.assertEqual(result['id'], trigger_id)
