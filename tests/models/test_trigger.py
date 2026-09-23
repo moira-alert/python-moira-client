@@ -164,14 +164,16 @@ class TriggerTest(ModelTest):
             **trigger
         }
 
-        with patch.object(client, 'get', side_effect=[{'list': [trigger_from_response]}, state, trigger_from_response]) as get_mock:
+        with patch.object(client, 'get',
+                          side_effect=[{'list': [trigger_from_response]}, state, trigger_from_response]) as get_mock:
             trigger_dto = trigger_manager.create(**trigger)
             with patch.object(client, 'put', return_value={'id': trigger_id}) as put_mock:
                 result = trigger_dto.save()
 
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
-                self.assertEqual(put_mock.call_args[0][0], 'trigger/{}?{}'.format(trigger_id, self.QUERY_PARAM_VALIDATE_FLAG))
+                self.assertEqual(put_mock.call_args[0][0],
+                                 'trigger/{}?{}'.format(trigger_id, self.QUERY_PARAM_VALIDATE_FLAG))
                 self.assertEqual(result['id'], trigger_id)
 
     def test_save_trigger_with_id(self):
@@ -197,5 +199,144 @@ class TriggerTest(ModelTest):
 
                 self.assertTrue(get_mock.called)
                 self.assertTrue(put_mock.called)
-                self.assertEqual(put_mock.call_args[0][0], 'trigger/{}?{}'.format(trigger_id, self.QUERY_PARAM_VALIDATE_FLAG))
+                self.assertEqual(put_mock.call_args[0][0],
+                                 'trigger/{}?{}'.format(trigger_id, self.QUERY_PARAM_VALIDATE_FLAG))
                 self.assertEqual(result['id'], trigger_id)
+
+    def test_create_trigger_with_warn_for(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create(
+            'Name',
+            ['tag'],
+            ['target'],
+            warn_for=60,
+        )
+
+        self.assertEqual(trigger.warn_for, 60)
+
+    def test_create_trigger_with_warn_keep_firing_for(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create(
+            'Name',
+            ['tag'],
+            ['target'],
+            warn_keep_firing_for=120,
+        )
+
+        self.assertEqual(trigger.warn_keep_firing_for, 120)
+
+    def test_create_trigger_with_error_for(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create(
+            'Name',
+            ['tag'],
+            ['target'],
+            error_for=180,
+        )
+
+        self.assertEqual(trigger.error_for, 180)
+
+    def test_create_trigger_with_error_keep_firing_for(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create(
+            'Name',
+            ['tag'],
+            ['target'],
+            error_keep_firing_for=240,
+        )
+
+        self.assertEqual(trigger.error_keep_firing_for, 240)
+
+
+    def test_create_trigger_with_all_new_fields(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create(
+            'Name',
+            ['tag'],
+            ['target'],
+            warn_for=60,
+            warn_keep_firing_for=120,
+            error_for=180,
+            error_keep_firing_for=240,
+        )
+
+        self.assertEqual(trigger.warn_for, 60)
+        self.assertEqual(trigger.warn_keep_firing_for, 120)
+        self.assertEqual(trigger.error_for, 180)
+        self.assertEqual(trigger.error_keep_firing_for, 240)
+
+    def test_save_new_trigger_with_new_fields(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger = trigger_manager.create(
+            'Name',
+            ['tag'],
+            ['target'],
+            warn_for=60,
+            warn_keep_firing_for=120,
+            error_for=180,
+            error_keep_firing_for=240,
+        )
+
+        trigger_id = '1'
+
+        with patch.object(
+                client,
+                'put',
+                return_value={'id': trigger_id},
+        ) as put_mock:
+            trigger.save()
+
+        self.assertTrue(put_mock.called)
+
+        request_data = put_mock.call_args[1]['json']
+
+        self.assertEqual(request_data['warn_for'], 60)
+        self.assertEqual(request_data['warn_keep_firing_for'], 120)
+        self.assertEqual(request_data['error_for'], 180)
+        self.assertEqual(request_data['error_keep_firing_for'], 240)
+
+
+    def test_save_existing_trigger_with_new_fields(self):
+        client = Client(self.api_url)
+        trigger_manager = TriggerManager(client)
+
+        trigger_id = '1'
+
+        trigger = {
+            'id': trigger_id,
+            'name': 'Name',
+            'tags': ['tag'],
+            'targets': ['target'],
+            'warn_for': 60,
+            'warn_keep_firing_for': 120,
+            'error_for': 180,
+            'error_keep_firing_for': 240,
+        }
+
+        with patch.object(
+                client,
+                'get',
+                side_effect=[
+                    {'list': [trigger]},
+                    {'state': 'OK', 'trigger_id': trigger_id},
+                    trigger,
+                ],
+        ):
+            trigger_dto = trigger_manager.create(**trigger)
+
+        self.assertEqual(trigger_dto.warn_for, 60)
+        self.assertEqual(trigger_dto.warn_keep_firing_for, 120)
+        self.assertEqual(trigger_dto.error_for, 180)
+        self.assertEqual(trigger_dto.error_keep_firing_for, 240)
